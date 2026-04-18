@@ -1,9 +1,9 @@
 package com.example.blocks;
 
 import com.Harbinger.Spore.Core.Sblocks;
+import com.Harbinger.Spore.SBlockEntities.CDUBlockEntity;
 import com.example.entity.block.BlockEntityRegistry;
 import com.example.entity.block.CDUInputConnectorBlockEntity;
-import com.example.util.ITickableBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
@@ -38,8 +38,8 @@ public class CDUInputConnectorBlock extends Block implements EntityBlock {
 
     @Override
     public void neighborChanged(BlockState thisBlockState, Level level, BlockPos thisBlockPos, Block changedBlock, BlockPos changedBlockPos, boolean p_60514_) {
+        super.neighborChanged(thisBlockState, level, thisBlockPos, changedBlock, changedBlockPos, p_60514_);
         if(level.isClientSide())  {
-            super.neighborChanged(thisBlockState, level, thisBlockPos, changedBlock, changedBlockPos, p_60514_);
             return;
         }
         CDUInputConnectorBlockEntity connectorBlockEntity = (CDUInputConnectorBlockEntity) level.getBlockEntity(thisBlockPos);
@@ -53,9 +53,10 @@ public class CDUInputConnectorBlock extends Block implements EntityBlock {
 
         if(changedBlock == Sblocks.CDU.get()) {
             if(changedToBlock != Sblocks.CDU.get()) {
-                log.info("CDUInputConnectorBlock.neighborChanged: CDU has been removed nearby");
+                log.debug("CDUInputConnectorBlock.neighborChanged: CDU has been removed nearby");
                 if(!connectorBlockEntity.isConnectedToCDU(changedBlockPos)) return;
                 connectorBlockEntity.disconnectFromCDU(changedBlockPos);
+                return;
             }
 
 
@@ -67,4 +68,6 @@ public class CDUInputConnectorBlock extends Block implements EntityBlock {
         if(changedToBlock != Sblocks.CDU.get()) return;
         connectorBlockEntity.connectToCDU(changedBlockPos);
     }
+
+
 }

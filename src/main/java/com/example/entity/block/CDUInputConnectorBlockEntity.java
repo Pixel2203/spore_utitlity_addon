@@ -2,18 +2,16 @@ package com.example.entity.block;
 
 import com.Harbinger.Spore.Core.Sblocks;
 import com.Harbinger.Spore.SBlockEntities.CDUBlockEntity;
-import com.Harbinger.Spore.Sblocks.CDUBlock;
 import com.example.util.ITickableBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
-import java.util.Optional;
 
 public class CDUInputConnectorBlockEntity extends BlockEntity implements ITickableBlockEntity {
 
@@ -34,24 +32,6 @@ public class CDUInputConnectorBlockEntity extends BlockEntity implements ITickab
 
     }
 
-    @Nullable
-    private CDUBlockEntity getConnectedCDU() {
-        return java.util.Arrays.stream(net.minecraft.core.Direction.values())
-                .map(worldPosition::relative)
-                .map(this::checkForCDU)
-                .filter(java.util.Objects::nonNull)
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Nullable
-    private CDUBlockEntity checkForCDU(BlockPos blockPos) {
-        if(Objects.isNull(level)) return null;
-        BlockState blockState = this.level.getBlockState(blockPos);
-        if(!blockState.is(Sblocks.CDU.get())) return null;
-        return (CDUBlockEntity) level.getBlockEntity(blockPos);
-    }
-
     public void connectToCDU(BlockPos blockPos) {
         if(Objects.isNull(level)) {
             log.error("CDUInputConnectorBlockEntity.connectToCDU: level is null");
@@ -64,6 +44,7 @@ public class CDUInputConnectorBlockEntity extends BlockEntity implements ITickab
         CDUBlockEntity cduBlockEntity = (CDUBlockEntity) level.getBlockEntity(blockPos);
         this.connectedCDU = cduBlockEntity;
         this.connectedCDUPos = blockPos;
+        log.debug("CDUInputConnectorBlockEntity.connectToCDU: connected to cdu at {}", this.connectedCDUPos);
     }
 
     public void disconnectFromCDU(BlockPos blockPos) {
@@ -75,8 +56,24 @@ public class CDUInputConnectorBlockEntity extends BlockEntity implements ITickab
             log.warn("CDUInputConnectorBlockEntity.disconnectFromCDU: disconnect from CDU that was not connected!");
             return;
         }
+        log.debug("CDUInputConnectorBlockEntity.connectToCDU: disconnected from cdu at {}", this.connectedCDUPos);
         this.connectedCDUPos = null;
         this.connectedCDU = null;
+
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        if(Objects.isNull(level)) return;
+        if(level.isClientSide()) return;
+
+        CDUBlockEntity foundCDU = this.getNearbyCDU(level, getBlockPos());
+        if(Objects.isNull(foundCDU)) return;
+
+        log.debug("CDUInputConnectorBlock.onPlace: found CDU nearby at {}" , foundCDU.getBlockPos());
+        this.connectToCDU(foundCDU.getBlockPos());
+
     }
 
     public boolean isConnectedToCDU() {
@@ -85,5 +82,25 @@ public class CDUInputConnectorBlockEntity extends BlockEntity implements ITickab
 
     public boolean isConnectedToCDU(BlockPos blockPos) {
         return Objects.nonNull(connectedCDU) && connectedCDUPos.equals(blockPos);
+    }
+
+
+
+    @javax.annotation.Nullable
+    private CDUBlockEntity getNearbyCDU(Level level, BlockPos blockPos) {
+        return java.util.Arrays.stream(net.minecraft.core.Direction.values())
+                .map(blockPos::relative)
+                .map(blockPos1 -> this.checkForCDU(level, blockPos1))
+                .filter(java.util.Objects::nonNull)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @javax.annotation.Nullable
+    private CDUBlockEntity checkForCDU(Level level, BlockPos blockPos) {
+        if(Objects.isNull(level)) return null;
+        BlockState blockState = level.getBlockState(blockPos);
+        if(!blockState.is(Sblocks.CDU.get())) return null;
+        return (CDUBlockEntity) level.getBlockEntity(blockPos);
     }
 }
