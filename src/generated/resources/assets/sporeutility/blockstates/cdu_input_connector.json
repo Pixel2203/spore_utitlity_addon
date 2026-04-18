@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "sporeutility:block/cdu_input_connector"
+    }
+  }
+}

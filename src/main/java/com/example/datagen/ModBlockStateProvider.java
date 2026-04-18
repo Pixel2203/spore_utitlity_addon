@@ -17,7 +17,7 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        blockWithItem(BlockRegistry.AdjustableCDU);
+        blockWithItem(BlockRegistry.CduInputConnectorBlock);
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject){

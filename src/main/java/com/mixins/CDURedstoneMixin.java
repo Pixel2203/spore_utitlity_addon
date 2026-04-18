@@ -32,8 +32,4 @@ public class CDURedstoneMixin {
     private static void addCDUFuelsWhenHavingHopperNearby(Level level, BlockPos blockPos, BlockState blockState, CDUBlockEntity e, CallbackInfo ci) {
         // TODO document why this method is empty
     }
-
-    private static List<Object> getConnectedHoppers(BlockPos blockPos) {
-
-    }
 }

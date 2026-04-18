@@ -8,11 +8,13 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import static com.example.blocks.BlockRegistry.CduInputConnectorBlock;
+
 public class BlockEntityRegistry {
 
     private static final DeferredRegister<BlockEntityType<?>> registered_blockentities = DeferredRegister.create(ForgeRegistries.BLOCK_ENTITY_TYPES, SporeUtility.MODID);
 
-    public static final RegistryObject<BlockEntityType<AdjustableCDUBlockEntity>> AdjustableCDUBlockEntity = registered_blockentities.register("adjustable_cdu_entity", () -> Factory.AdjustableCDUBlockEntity);
+    public static final RegistryObject<BlockEntityType<CDUInputConnectorBlockEntity>> CduInputConnectorBlockEntity = registered_blockentities.register("cdu_input_connector", () -> Factory.CDUInputConnectorBlockEntity);
 
     public static void registerBlockEntityTypes(IEventBus eventBus){
         registered_blockentities.register(eventBus);
@@ -20,7 +22,7 @@ public class BlockEntityRegistry {
 
 
     private static class Factory {
-        public static BlockEntityType<AdjustableCDUBlockEntity> AdjustableCDUBlockEntity = BlockEntityType.Builder.of(AdjustableCDUBlockEntity::new, BlockRegistry.AdjustableCDU.get()).build(null);
+        public static BlockEntityType<CDUInputConnectorBlockEntity> CDUInputConnectorBlockEntity = BlockEntityType.Builder.of(CDUInputConnectorBlockEntity::new, CduInputConnectorBlock.get()).build(null);
 
     }
 }

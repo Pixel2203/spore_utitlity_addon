@@ -16,7 +16,7 @@ import java.util.function.Supplier;
 public class BlockRegistry {
 
     private static final DeferredRegister<Block> registered_blocks = DeferredRegister.create(ForgeRegistries.BLOCKS, SporeUtility.MODID);
-    public static final RegistryObject<Block> AdjustableCDU = registerBlockWithItem("adjustable_cdu", () -> Factory.ADJUSTABLE_CDU);
+    public static final RegistryObject<Block> CduInputConnectorBlock = registerBlockWithItem("cdu_input_connector", () -> Factory.CDU_INPUT_CONNECOTR_BLK);
 
 
 
@@ -48,6 +48,6 @@ public class BlockRegistry {
     }
 
     private static class Factory {
-        public static final Block ADJUSTABLE_CDU = new AdjustableCDUBlock();
+        public static final Block CDU_INPUT_CONNECOTR_BLK = new CDUInputConnectorBlock();
     }
 }
