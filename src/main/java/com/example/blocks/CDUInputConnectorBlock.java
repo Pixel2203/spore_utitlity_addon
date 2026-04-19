@@ -4,12 +4,15 @@ import com.Harbinger.Spore.Core.Sblocks;
 import com.Harbinger.Spore.SBlockEntities.CDUBlockEntity;
 import com.example.entity.block.BlockEntityRegistry;
 import com.example.entity.block.CDUInputConnectorBlockEntity;
+import com.example.util.ITickableBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -69,5 +72,28 @@ public class CDUInputConnectorBlock extends Block implements EntityBlock {
         connectorBlockEntity.connectToCDU(changedBlockPos);
     }
 
+    @Override
+    public void onRemove(BlockState blockState, Level level, BlockPos blockPos, BlockState newState, boolean p_60519_) {
 
+        if(level.isClientSide() || newState.is(blockState.getBlock())) {
+            super.onRemove(blockState, level, blockPos, newState, p_60519_);
+            return;
+        };
+
+        CDUInputConnectorBlockEntity blockEntity = (CDUInputConnectorBlockEntity)level.getBlockEntity(blockPos);
+        if(Objects.isNull(blockEntity)) {
+            log.error("CDUInputConnectorBlock.onRemove: ConnectorBlockEntity is null altough it should not be");
+            super.onRemove(blockState, level, blockPos, newState, p_60519_);
+            return;
+        }
+        blockEntity.drops();
+        super.onRemove(blockState, level, blockPos, newState, p_60519_);
+
+
+    }
+
+    @Override
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level p_153212_, BlockState p_153213_, BlockEntityType<T> p_153214_) {
+        return ITickableBlockEntity.getTickerHelper(p_153212_);
+    }
 }

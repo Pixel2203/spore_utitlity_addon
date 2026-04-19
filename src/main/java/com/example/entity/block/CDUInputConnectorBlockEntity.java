@@ -1,19 +1,32 @@
 package com.example.entity.block;
 
 import com.Harbinger.Spore.Core.Sblocks;
+import com.Harbinger.Spore.Core.Sitems;
 import com.Harbinger.Spore.SBlockEntities.CDUBlockEntity;
 import com.example.util.ITickableBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.Container;
+import net.minecraft.world.Containers;
+import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-public class CDUInputConnectorBlockEntity extends BlockEntity implements ITickableBlockEntity {
+public class CDUInputConnectorBlockEntity extends BlockEntity implements ITickableBlockEntity, Container {
 
     private static final Logger log = LoggerFactory.getLogger(CDUInputConnectorBlockEntity.class);
 
@@ -29,7 +42,45 @@ public class CDUInputConnectorBlockEntity extends BlockEntity implements ITickab
     @Override
     public void tick() {
          if(connectedCDU == null) return;
+         if(!hasIceCanister()) return;
+         int cduFuel = connectedCDU.getFuel();
+         if(cduFuel > 0) return;
+         refuelCDU();
+    }
 
+    private void refuelCDU() {
+        ItemStack extraced = inventory.extractItem(0, 1, false);
+        if(!extraced.is(Sitems.ICE_CANISTER.get())) {
+            log.warn("CDUInputConnectorBlockEntity.refuelCDU: Extracted Item was not of type IceCanister, found: {}" , extraced);
+        }
+        this.connectedCDU.setFuel(this.connectedCDU.maxFuel);
+    }
+
+    private boolean hasIceCanister() {
+        return this.inventory.getStackInSlot(0).is(Sitems.ICE_CANISTER.get());
+    }
+
+    private final ItemStackHandler inventory = new ItemStackHandler(1);
+    private LazyOptional<IItemHandler> lazyOptional = LazyOptional.empty();
+
+    @Override
+    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
+        if(cap == ForgeCapabilities.ITEM_HANDLER) {
+            return this.lazyOptional.cast();
+        }
+        return super.getCapability(cap);
+    }
+    @Override
+    public void invalidateCaps() {
+        super.invalidateCaps();
+        this.lazyOptional.invalidate();
+    }
+    public void drops() {
+        SimpleContainer container = new SimpleContainer(inventory.getSlots());
+        for(int i = 0; i < inventory.getSlots(); i++) {
+            container.setItem(i, inventory.getStackInSlot(i));
+        }
+        Containers.dropContents(this.level, this.worldPosition, container);
     }
 
     public void connectToCDU(BlockPos blockPos) {
@@ -67,7 +118,7 @@ public class CDUInputConnectorBlockEntity extends BlockEntity implements ITickab
         super.onLoad();
         if(Objects.isNull(level)) return;
         if(level.isClientSide()) return;
-
+        if(isConnectedToCDU()) return;
         CDUBlockEntity foundCDU = this.getNearbyCDU(level, getBlockPos());
         if(Objects.isNull(foundCDU)) return;
 
@@ -102,5 +153,69 @@ public class CDUInputConnectorBlockEntity extends BlockEntity implements ITickab
         BlockState blockState = level.getBlockState(blockPos);
         if(!blockState.is(Sblocks.CDU.get())) return null;
         return (CDUBlockEntity) level.getBlockEntity(blockPos);
+    }
+
+    @Override
+    public int getContainerSize() {
+        return inventory.getSlots();
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return inventory.getStackInSlot(0).isEmpty();
+    }
+
+    @Override
+    public ItemStack getItem(int slot) {
+        return inventory.getStackInSlot(slot);
+    }
+
+    @Override
+    public ItemStack removeItem(int slot, int amount) {
+        return inventory.extractItem(slot, amount, false);
+    }
+
+    @Override
+    public ItemStack removeItemNoUpdate(int slot) {
+        ItemStack stack = inventory.getStackInSlot(slot);
+        inventory.setStackInSlot(slot, ItemStack.EMPTY);
+        return stack;
+    }
+
+    @Override
+    public void setItem(int slot, ItemStack stack) {
+        inventory.setStackInSlot(slot, stack);
+    }
+
+    @Override
+    public int getMaxStackSize() {
+        return Container.super.getMaxStackSize();
+    }
+
+    @Override
+    public boolean stillValid(Player p_18946_) {
+        return true;
+    }
+
+    @Override
+    public void clearContent() {
+        inventory.setStackInSlot(0, ItemStack.EMPTY);
+    }
+
+    @Override
+    public boolean canPlaceItem(int slot, ItemStack stack) {
+        return stack.is(Sitems.ICE_CANISTER.get()) && Container.super.canPlaceItem(slot, stack);
+    }
+
+    @Override
+    protected void saveAdditional(CompoundTag tag) {
+        super.saveAdditional(tag);
+        tag.put("inventory", inventory.serializeNBT());
+    }
+
+    @Override
+    public void load(CompoundTag tag) {
+        super.load(tag);
+        this.inventory.deserializeNBT(tag.getCompound("inventory"));
     }
 }
