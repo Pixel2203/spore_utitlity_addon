@@ -3,13 +3,21 @@ package com.example.entity.block;
 import com.Harbinger.Spore.Core.Sblocks;
 import com.Harbinger.Spore.Core.Sitems;
 import com.Harbinger.Spore.SBlockEntities.CDUBlockEntity;
+import com.example.blocks.CDUFillerBlock;
+import com.example.menu.CDUFillerMenu;
 import com.example.util.ITickableBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.Containers;
+import net.minecraft.world.MenuProvider;
 import net.minecraft.world.SimpleContainer;
+import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -20,40 +28,49 @@ import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-public class CDUInputConnectorBlockEntity extends BlockEntity implements ITickableBlockEntity, Container {
+public class CDUFillerBlockEntity extends BlockEntity implements ITickableBlockEntity, Container, MenuProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(CDUInputConnectorBlockEntity.class);
+    private static final Logger log = LoggerFactory.getLogger(CDUFillerBlockEntity.class);
 
-    @Nullable
-    private CDUBlockEntity connectedCDU;
-    @Nullable
-    private BlockPos connectedCDUPos;
 
-    public CDUInputConnectorBlockEntity(BlockPos p_155229_, BlockState p_155230_) {
+    private final List<CDUBlockEntity> connectedCDUs;
+
+    public CDUFillerBlockEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(BlockEntityRegistry.CduInputConnectorBlockEntity.get(), p_155229_, p_155230_);
+        this.connectedCDUs = new ArrayList<>();
     }
 
     @Override
     public void tick() {
-         if(connectedCDU == null) return;
+         if(connectedCDUs.isEmpty()) return;
          if(!hasIceCanister()) return;
-         int cduFuel = connectedCDU.getFuel();
-         if(cduFuel > 0) return;
-         refuelCDU();
+
+         for(CDUBlockEntity connectedCDU : connectedCDUs) {
+
+             int cduFuel = connectedCDU.getFuel();
+             if(cduFuel > 0) continue;
+             refuelCDU(connectedCDU);
+
+             if(!hasIceCanister()) break;
+         }
+
     }
 
-    private void refuelCDU() {
+    private void refuelCDU(CDUBlockEntity connectedCDU) {
         ItemStack extraced = inventory.extractItem(0, 1, false);
         if(!extraced.is(Sitems.ICE_CANISTER.get())) {
-            log.warn("CDUInputConnectorBlockEntity.refuelCDU: Extracted Item was not of type IceCanister, found: {}" , extraced);
+            log.warn("CDUFillerBlockEntity.refuelCDU: Extracted Item was not of type IceCanister, found: {}" , extraced);
+            return;
         }
-        this.connectedCDU.setFuel(this.connectedCDU.maxFuel);
+        connectedCDU.setFuel(connectedCDU.maxFuel);
     }
 
     private boolean hasIceCanister() {
@@ -74,6 +91,7 @@ public class CDUInputConnectorBlockEntity extends BlockEntity implements ITickab
     public void invalidateCaps() {
         super.invalidateCaps();
         this.lazyOptional.invalidate();
+        
     }
     public void drops() {
         SimpleContainer container = new SimpleContainer(inventory.getSlots());
@@ -85,66 +103,96 @@ public class CDUInputConnectorBlockEntity extends BlockEntity implements ITickab
 
     public void connectToCDU(BlockPos blockPos) {
         if(Objects.isNull(level)) {
-            log.error("CDUInputConnectorBlockEntity.connectToCDU: level is null");
+            log.error("CDUFillerBlockEntity.connectToCDU: level is null");
             return;
         }
         if(!level.getBlockState(blockPos).is(Sblocks.CDU.get())) {
-            log.error("CDUInputConnectorBlockEntity.connectToCDU: blockstate is not of type cdu");
+            log.error("CDUFillerBlockEntity.connectToCDU: blockstate is not of type cdu");
             return;
         }
+        if(isConnectedToCDU(blockPos)) {
+            log.error("CDUFillerBlockEntity.connectToCDU: already connected to cdu");
+            return;
+        }
+
         CDUBlockEntity cduBlockEntity = (CDUBlockEntity) level.getBlockEntity(blockPos);
-        this.connectedCDU = cduBlockEntity;
-        this.connectedCDUPos = blockPos;
-        log.debug("CDUInputConnectorBlockEntity.connectToCDU: connected to cdu at {}", this.connectedCDUPos);
+        this.connectedCDUs.add(cduBlockEntity);
+        log.debug("CDUFillerBlockEntity.connectToCDU: connected to cdu at {}", cduBlockEntity.getBlockPos());
     }
 
     public void disconnectFromCDU(BlockPos blockPos) {
         if(Objects.isNull(level)) {
-            log.error("CDUInputConnectorBlockEntity.disconnectFromCDU: level is null");
+            log.error("CDUFillerBlockEntity.disconnectFromCDU: level is null");
             return;
         }
-        if(!this.connectedCDUPos.equals(blockPos)) {
-            log.warn("CDUInputConnectorBlockEntity.disconnectFromCDU: disconnect from CDU that was not connected!");
+        if(!isConnectedToCDU(blockPos)) {
+            log.error("CDUFillerBlockEntity.disconnectFromCDU: disconnect from CDU that was not connected!");
             return;
         }
-        log.debug("CDUInputConnectorBlockEntity.connectToCDU: disconnected from cdu at {}", this.connectedCDUPos);
-        this.connectedCDUPos = null;
-        this.connectedCDU = null;
+        List<CDUBlockEntity> cdus = this.connectedCDUs.stream()
+                .filter(entity -> entity.getBlockPos().equals(blockPos))
+                .toList();
+
+        if(cdus.size() > 1) {
+            log.warn("CDUFillerBlockEntity.disconnectFromCDU: Found more than one CDU at {}", blockPos);
+        }
+
+        this.connectedCDUs.remove(cdus.get(0));
+        log.debug("CDUFillerBlockEntity.connectToCDU: disconnected from cdu at {}", blockPos);
 
     }
 
     @Override
     public void onLoad() {
         super.onLoad();
+        lazyOptional = LazyOptional.of(() -> inventory);
         if(Objects.isNull(level)) return;
         if(level.isClientSide()) return;
+        ServerLevel serverLevel = (ServerLevel) level;
         if(isConnectedToCDU()) return;
-        CDUBlockEntity foundCDU = this.getNearbyCDU(level, getBlockPos());
-        if(Objects.isNull(foundCDU)) return;
+        List<BlockPos> foundCDUs = this.getNearbyCDUs(serverLevel, getBlockPos());
+        if(foundCDUs.isEmpty()) return;
 
-        log.debug("CDUInputConnectorBlock.onPlace: found CDU nearby at {}" , foundCDU.getBlockPos());
-        this.connectToCDU(foundCDU.getBlockPos());
-
+        for(BlockPos cduPos : foundCDUs) {
+            if(isConnectedToCDU(cduPos)) return;
+            connectToCDU(cduPos);
+            log.debug("CDUFillerBlockEntity.onPlace: found CDU nearby at {}" , cduPos);
+        }
     }
 
     public boolean isConnectedToCDU() {
-        return Objects.nonNull(connectedCDU);
+        return !this.connectedCDUs.isEmpty();
     }
 
     public boolean isConnectedToCDU(BlockPos blockPos) {
-        return Objects.nonNull(connectedCDU) && connectedCDUPos.equals(blockPos);
+        return this.connectedCDUs.stream().anyMatch(cdu -> cdu.getBlockPos().equals(blockPos));
     }
 
 
+    /**
+     * @param level ServerLevel
+     * @param blockPos BlockPos
+     * @return Returns an Immutable List of CDUBlockEntity
+     */
+    private List<BlockPos> getNearbyCDUs(ServerLevel level, BlockPos blockPos) {
+        Direction facing = getBlockState().getValue(CDUFillerBlock.FACING);
+        Direction right = facing.getClockWise();
+        Direction left = facing.getCounterClockWise();
 
-    @javax.annotation.Nullable
-    private CDUBlockEntity getNearbyCDU(Level level, BlockPos blockPos) {
-        return java.util.Arrays.stream(net.minecraft.core.Direction.values())
-                .map(blockPos::relative)
-                .map(blockPos1 -> this.checkForCDU(level, blockPos1))
-                .filter(java.util.Objects::nonNull)
-                .findFirst()
-                .orElse(null);
+        BlockPos rightBlockPos = blockPos.relative(right);
+        BlockPos leftBlockPos = blockPos.relative(left);
+
+        List<CDUBlockEntity> nearbyCDUs = new ArrayList<>();
+
+        CDUBlockEntity leftEntity = checkForCDU(level, leftBlockPos);
+        CDUBlockEntity rightEntity = checkForCDU(level, rightBlockPos);
+        nearbyCDUs.add(leftEntity);
+        nearbyCDUs.add(rightEntity);
+
+        return nearbyCDUs.stream()
+                .filter(Objects::nonNull)
+                .map(BlockEntity::getBlockPos)
+                .toList();
     }
 
     @javax.annotation.Nullable
@@ -217,5 +265,15 @@ public class CDUInputConnectorBlockEntity extends BlockEntity implements ITickab
     public void load(CompoundTag tag) {
         super.load(tag);
         this.inventory.deserializeNBT(tag.getCompound("inventory"));
+    }
+
+    @Override
+    public Component getDisplayName() {
+        return Component.literal("cdu_filler");
+    }
+
+    @Override
+    public @Nullable AbstractContainerMenu createMenu(int containerId, Inventory inventory, Player player) {
+        return new CDUFillerMenu(containerId, inventory, this);
     }
 }

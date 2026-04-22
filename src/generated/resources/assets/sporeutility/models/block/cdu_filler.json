@@ -1,0 +1,12 @@
+{
+  "parent": "minecraft:block/cube",
+  "textures": {
+    "down": "sporeutility:block/cdu_filler/filler-bottom",
+    "east": "sporeutility:block/cdu_filler/filler-side",
+    "north": "sporeutility:block/cdu_filler/filler-front",
+    "particle": "sporeutility:block/cdu_filler/filler-bottom",
+    "south": "sporeutility:block/cdu_filler/filler-front",
+    "up": "sporeutility:block/cdu_filler/filler-top",
+    "west": "sporeutility:block/cdu_filler/filler-side"
+  }
+}

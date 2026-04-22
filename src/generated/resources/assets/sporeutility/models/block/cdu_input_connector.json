@@ -1,6 +1,0 @@
-{
-  "parent": "minecraft:block/cube_all",
-  "textures": {
-    "all": "sporeutility:block/cdu_input_connector"
-  }
-}

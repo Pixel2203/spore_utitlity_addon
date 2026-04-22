@@ -17,5 +17,5 @@
       "rolls": 1.0
     }
   ],
-  "random_sequence": "sporeutility:blocks/cdu_input_connector"
+  "random_sequence": "sporeutility:blocks/cdu_filler"
 }

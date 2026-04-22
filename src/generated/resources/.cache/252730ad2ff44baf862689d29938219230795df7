@@ -1,4 +1,4 @@
-// 1.20.1	2026-04-18T23:03:03.4407481	Block States: sporeutility
-7aa57e534e44468aa76aea16cf7d7cfabe70874d assets/sporeutility/blockstates/cdu_input_connector.json
-1600e158c40ce66ceaa648b2688eda6aea5da6c2 assets/sporeutility/models/block/cdu_input_connector.json
-6ff6e8f66bbc486f4ca05fa022a5d0890dafbfc9 assets/sporeutility/models/item/cdu_input_connector.json
+// 1.20.1	2026-04-21T22:19:01.388963	Block States: sporeutility
+7105dbe4a06295a58cb08090be4e3861a107a708 assets/sporeutility/blockstates/cdu_filler.json
+5ea522a8a813e32b5d0e91afb34d333ef9e97d37 assets/sporeutility/models/block/cdu_filler.json
+6febef20748d792264bcd9d137f2a3e31e728f8b assets/sporeutility/models/item/cdu_filler.json

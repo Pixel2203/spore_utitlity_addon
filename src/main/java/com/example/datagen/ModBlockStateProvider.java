@@ -5,6 +5,7 @@ import com.example.examplemod.SporeUtility;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
+import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -17,7 +18,16 @@ public class ModBlockStateProvider extends BlockStateProvider {
 
     @Override
     protected void registerStatesAndModels() {
-        blockWithItem(BlockRegistry.CduInputConnectorBlock);
+        ModelFile cduFillerModel = models().cube(BlockRegistry.CDUFiller.getId().getPath(),
+                modLoc("block/cdu_filler/filler-bottom"),
+                modLoc("block/cdu_filler/filler-top"),
+                modLoc("block/cdu_filler/filler-front"),
+                modLoc("block/cdu_filler/filler-front"),
+                modLoc("block/cdu_filler/filler-side"),
+                modLoc("block/cdu_filler/filler-side")
+        ).texture("particle", modLoc("block/cdu_filler/filler-bottom"));
+        horizontalBlock(BlockRegistry.CDUFiller.get(),  cduFillerModel);
+        simpleBlockItem(BlockRegistry.CDUFiller.get(), cduFillerModel);
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject){

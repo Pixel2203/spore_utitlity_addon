@@ -1,13 +1,24 @@
 package com.example.examplemod;
 
 import com.example.blocks.BlockRegistry;
+import com.example.creativeTabs.TabRegistry;
 import com.example.entity.block.BlockEntityRegistry;
 import com.example.items.ItemRegistry;
+import com.example.menu.ModMenuTypes;
+import com.example.screen.CDUFillerScreen;
 import com.mojang.logging.LogUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
+import net.minecraft.client.renderer.ItemBlockRenderTypes;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.config.ModConfig;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.slf4j.Logger;
@@ -34,6 +45,8 @@ public class SporeUtility
         BlockRegistry.registerBlocks(modEventBus);
         ItemRegistry.registerItems(modEventBus);
         BlockEntityRegistry.registerBlockEntityTypes(modEventBus);
+        TabRegistry.registerTabs(modEventBus);
+        ModMenuTypes.register(modEventBus);
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -47,4 +60,18 @@ public class SporeUtility
         Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
     }
 
+    // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
+    @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
+    public static class ClientModEvents
+    {
+        @SubscribeEvent
+        public static void onClientSetup(FMLClientSetupEvent event)
+        {
+            MenuScreens.register(ModMenuTypes.CDU_FILLER_MENU.get(), CDUFillerScreen::new);
+            // Some client setup code
+            LOGGER.info("HELLO FROM CLIENT SETUP");
+            LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+        }
+
+    }
 }

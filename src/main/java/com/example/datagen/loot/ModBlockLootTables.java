@@ -17,7 +17,7 @@ public class ModBlockLootTables extends BlockLootSubProvider {
 
     @Override
     protected void generate() {
-        this.dropNothing(BlockRegistry.CduInputConnectorBlock.get());
+        this.dropSelf(BlockRegistry.CDUFiller.get());
     }
 
     @Override

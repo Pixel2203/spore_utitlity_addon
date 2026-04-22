@@ -4,7 +4,9 @@ import com.example.examplemod.SporeUtility;
 import com.example.items.ItemRegistry;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -16,7 +18,7 @@ import java.util.function.Supplier;
 public class BlockRegistry {
 
     private static final DeferredRegister<Block> registered_blocks = DeferredRegister.create(ForgeRegistries.BLOCKS, SporeUtility.MODID);
-    public static final RegistryObject<Block> CduInputConnectorBlock = registerBlockWithItem("cdu_input_connector", () -> Factory.CDU_INPUT_CONNECOTR_BLK);
+    public static final RegistryObject<Block> CDUFiller = registerBlockWithItem("cdu_filler", () -> Factory.CDUFillerBLK);
 
 
 
@@ -35,6 +37,7 @@ public class BlockRegistry {
     private static <T extends Block> RegistryObject<T> registerBlockWithItem(String name, Supplier<T> block){
         RegistryObject<T> toReturn = (RegistryObject<T>) registerBlock(name, block);
         ItemRegistry.registerItem(name, () -> new BlockItem(block.get(), new Item.Properties()));
+
         return toReturn;
     }
     private static <T extends Block> RegistryObject<T> registerBlockWithItem(String name, Supplier<T> block, Item.Properties properties){
@@ -48,6 +51,6 @@ public class BlockRegistry {
     }
 
     private static class Factory {
-        public static final Block CDU_INPUT_CONNECOTR_BLK = new CDUInputConnectorBlock();
+        public static final Block CDUFillerBLK = new CDUFillerBlock();
     }
 }
