@@ -34,7 +34,7 @@ public class AFUBlock extends Block implements EntityBlock {
 
         AFUBlockEntity entity = (AFUBlockEntity) level.getBlockEntity(blockPos);
         if(Objects.isNull(entity)) {
-            log.error("AFUBlock.onPlace: AFUBlockEntity is null");
+            log.error("AFUBlock.onPlace: Unable to find responsible AFU");
             return;
         }
 
@@ -47,10 +47,10 @@ public class AFUBlock extends Block implements EntityBlock {
         if(level.isClientSide()) {
             super.onRemove(p_60515_, level, blockPos, p_60518_, p_60519_);
             return;
-        };
+        }
         AFUBlockEntity entity = (AFUBlockEntity) level.getBlockEntity(blockPos);
         if(Objects.isNull(entity)) {
-            log.error("AFUBlock.onRemove: AFUBlockEntity is null");
+            log.error("AFUBlock.onRemove: Unable to find responsible AFU");
             return;
         }
         entity.unseal((ServerLevel) level);

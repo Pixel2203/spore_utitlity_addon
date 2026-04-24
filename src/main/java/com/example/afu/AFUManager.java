@@ -42,22 +42,12 @@ public class AFUManager {
         return SEALED_MAP.containsKey(pos);
     }
 
-    public static void unregisterAFU(ServerLevel level, AFUBlockEntity afu) {
+    public static void unregisterAFU(ServerLevel level, Set<BlockPos> sealedBlocks, Set<BlockPos> replacedAirBlocks) {
         // Entfernt alle Einträge, die zu dieser AFU gehören
-        Set<BlockPos> foundAirBlocks = AIR_MAP.entrySet().stream().filter(blockPosAFUBlockEntityEntry -> blockPosAFUBlockEntityEntry.getValue() == afu)
-                        .map(Map.Entry::getKey).collect(Collectors.toSet());
-        foundAirBlocks.forEach(AIR_MAP::remove);
+        sealedBlocks.forEach(SEALED_MAP::remove);
+        replacedAirBlocks.forEach(AIR_MAP::remove);
 
-        // Entfernt alle Sealed Zustände
-        var sealedBlocks = SEALED_MAP.entrySet()
-                .stream()
-                .filter(blockPosAFUBlockEntityEntry ->  blockPosAFUBlockEntityEntry.getValue() == afu)
-                .map(Map.Entry::getKey).collect(Collectors.toSet());
-
-        sealedBlocks.forEach(AFUManager::removeSealedBlock);
-
-
-        foundAirBlocks.forEach(pos -> {
+        replacedAirBlocks.forEach(pos -> {
             BlockState state = level.getBlockState(pos);
             if(state.is(BlockRegistry.CleanedAir.get())) {
                 level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);

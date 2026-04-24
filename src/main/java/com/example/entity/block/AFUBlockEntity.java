@@ -1,6 +1,9 @@
 package com.example.entity.block;
 
+import com.example.afu.AFUContext;
 import com.example.afu.AFUManager;
+import com.example.afu.RoomScanner;
+import com.example.afu.ScanResult;
 import com.example.blocks.BlockRegistry;
 import com.example.errors.BlockLimitExceededException;
 import com.example.util.ITickableBlockEntity;
@@ -9,6 +12,7 @@ import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,22 +27,18 @@ import java.util.*;
 public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity {
 
     private static final Logger log = LoggerFactory.getLogger(AFUBlockEntity.class);
-    private boolean isSealed = false;
-    private int ticker;
-    private final int autoRetry = 20 * 60;
-    private final int maxRoomLimit = 1000;
 
-    @Nullable
-    private Set<BlockPos> sealedBlocks;
-    @Nullable
-    private Set<BlockPos> replacedAirBlocks;
 
+    private final AFUContext context;
+    private final RoomScanner scanner;
 
     public AFUBlockEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(BlockEntityRegistry.AFUBlockEntity.get(), p_155229_, p_155230_);
+        this.context = new AFUContext(20*60);
+        this.scanner = new RoomScanner(1000);
     }
 
-    public void breach() {
+    public void breach(BlockPos breachedPos) {
         Level level = getLevel();
         if(level.isClientSide()) return;
         this.unseal((ServerLevel) level);
@@ -47,96 +47,72 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity 
 
 
     public void seal(@NotNull ServerLevel level) {
-        if(isSealed) {
+        if(context.isSealed()) {
             log.warn(("AFUBlockEntity.seal: Unable to seal as AFU is already sealed"));
             return;
         }
         try {
-            Pair<Set<BlockPos>, Set<BlockPos>> result = this.spread(level, getBlockPos(), maxRoomLimit);
-            this.replacedAirBlocks = result.getA();
-            this.sealedBlocks = result.getB();
-            AFUManager.registerAFU(this, sealedBlocks, replacedAirBlocks, level);
+            ScanResult result = this.scanner.scan(level, getBlockPos());
+            context.getReplacedAirBlocks().addAll(result.cleanedAirBlocks());
+            context.getSealedBlocks().addAll(result.sealedBlocks());
 
-            log.debug("Blocks to supply: {}", sealedBlocks.size());
+            AFUManager.registerAFU(this, context.getSealedBlocks(), context.getReplacedAirBlocks(), level);
+
+            log.debug("Blocks to supply: {}", context.getSealedBlocks().size());
+            context.setSealed(true);
         }catch (BlockLimitExceededException e) {
             log.error(e.getMessage());
         }
     }
 
     public void unseal(ServerLevel level) {
-        if(!isSealed) {
+        if(!context.isSealed()) {
             log.warn(("AFUBlockEntity.unseal: Unable to unseal as AFU is already unsealed"));
             return;
         }
-        AFUManager.unregisterAFU(level, this);
-    }
-
-    private Pair<Set<BlockPos>, Set<BlockPos>> spread(Level level, BlockPos startPos, int maxBlocks) throws BlockLimitExceededException {
-        // 1. Hier speichern wir alle Positionen, die wir schon besucht haben
-        Set<BlockPos> sealed = new HashSet<>();
-        Set<BlockPos> toBeReplaced = new HashSet<>();
-        // 2. Hier kommen die Blöcke rein, die noch geprüft werden müssen
-        Queue<BlockPos> queue = new LinkedList<>();
-
-        // Wir starten beim Block direkt am Air Purifier
-        queue.add(startPos);
-        //visited.add(startPos);
-
-        while (!queue.isEmpty() ) {
-            BlockPos current = queue.poll();
-            // Prüfe alle 6 Richtungen
-            for (Direction dir : Direction.values()) {
-                BlockPos neighbor = current.relative(dir);
-
-                // Nur weitermachen, wenn wir dort noch nicht waren UND es Luft ist
-                BlockState neighborState = level.getBlockState(neighbor);
-                if(!canFlow(level, neighborState, neighbor)) continue;
-                if(sealed.contains(neighbor)) continue;
-
-                if(neighborState.is(Blocks.AIR)) {
-                    toBeReplaced.add(neighbor);
-                }
-
-                sealed.add(neighbor);
-                queue.add(neighbor);
-
-                // Sicherheitsstopp
-                if (sealed.size() > maxBlocks) {
-                    throw new BlockLimitExceededException("Room to seal is not allowed to exceed " + maxBlocks + " blocks!");
-                }
-
-            }
+        Set<BlockPos> sealedBlocks = context.getSealedBlocks();
+        Set<BlockPos> replacedAirBlocks = context.getReplacedAirBlocks();
+        if(sealedBlocks.isEmpty()) {
+            log.warn("AFUBlockEntity.unseal: sealedBlocks is empty, cannot unseal");
+            return;
         }
-        return new Pair<>(toBeReplaced, sealed);
+        if(replacedAirBlocks.isEmpty()) {
+            log.warn("AFUBlockEntity.unseal: replacedAirBlocks is empty,  cannot unseal");
+            return;
+        }
+        AFUManager.unregisterAFU(level, sealedBlocks, replacedAirBlocks);
+
+        sealedBlocks.clear();
+        replacedAirBlocks.clear();
+        context.setSealed(false);
     }
 
-    private boolean canFlow(Level level, BlockState state, BlockPos pos) {
-        return state.is(Blocks.AIR) || state.canBeReplaced() || !state.isCollisionShapeFullBlock(level, pos);
-    }
+
+
+
 
 
     @Override
     public void tick(ServerLevel level) {
-        if(isSealed) return;
-        ticker++;
-        if(ticker >= autoRetry) {
+        if(context.isSealed()) return;
+        context.increaseTicker();
+        if(context.getTicker() >= context.getAutoRetryInterval()) {
             this.seal(level);
-            ticker = 0;
+            context.setTicker(0);
         }
     }
 
     @Override
-    public void load(CompoundTag compoundTag) {
+    public void load(@NotNull CompoundTag compoundTag) {
         super.load(compoundTag);
-        this.isSealed = compoundTag.getBoolean("isSealed");
-        this.ticker = compoundTag.getInt("ticker");
+        this.context.loadFromNbt(compoundTag);
+
     }
 
     @Override
-    protected void saveAdditional(CompoundTag compoundTag) {
+    protected void saveAdditional(@NotNull CompoundTag compoundTag) {
         super.saveAdditional(compoundTag);
-        compoundTag.putBoolean("isSealed", isSealed);
-        compoundTag.putInt("ticker", ticker);
+        this.context.saveToNbt(compoundTag);
     }
 
     @Override
@@ -145,16 +121,14 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity 
 
         Level level = getLevel();
         if(level.isClientSide()) return;
-        if(!isSealed) {
+        if(!context.isSealed()) {
             this.seal((ServerLevel) level);
         }
-
-
     }
 
     @Override
     public void onChunkUnloaded() {
-        if(this.isSealed) {
+        if(context.isSealed()) {
             this.unseal((ServerLevel) level);
         }
         super.onChunkUnloaded();

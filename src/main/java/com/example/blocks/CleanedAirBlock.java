@@ -40,7 +40,7 @@ public class CleanedAirBlock extends Block {
                 level.setBlock(thisBlockPos, Blocks.AIR.defaultBlockState(),3);
                 return;
             }
-            afu.breach((ServerLevel) level, afu.getBlockPos());
+            afu.breach(changedBlockPos);
         }
 
 
