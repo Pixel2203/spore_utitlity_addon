@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "sporeutility:cdu_filler"
+          "name": "sporeutility:afu"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "sporeutility:blocks/cdu_filler"
+  "random_sequence": "sporeutility:blocks/afu"
 }

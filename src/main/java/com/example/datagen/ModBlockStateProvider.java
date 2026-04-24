@@ -2,8 +2,10 @@ package com.example.datagen;
 
 import com.example.blocks.BlockRegistry;
 import com.example.examplemod.SporeUtility;
+import net.minecraft.client.renderer.RenderType;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.level.block.Block;
+import net.minecraftforge.client.ForgeRenderTypes;
 import net.minecraftforge.client.model.generators.BlockStateProvider;
 import net.minecraftforge.client.model.generators.ModelFile;
 import net.minecraftforge.common.data.ExistingFileHelper;
@@ -28,6 +30,9 @@ public class ModBlockStateProvider extends BlockStateProvider {
         ).texture("particle", modLoc("block/cdu_filler/filler-bottom"));
         horizontalBlock(BlockRegistry.CDUFiller.get(),  cduFillerModel);
         simpleBlockItem(BlockRegistry.CDUFiller.get(), cduFillerModel);
+
+        blockWithItem(BlockRegistry.AFU);
+        simpleBlock(BlockRegistry.CleanedAir.get(), models().cubeAll("cleaned_air", modLoc("block/cleaned_air")).renderType("translucent"));
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject){

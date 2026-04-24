@@ -1,4 +1,9 @@
-// 1.20.1	2026-04-21T22:19:01.388963	Block States: sporeutility
+// 1.20.1	2026-04-23T17:10:32.1736074	Block States: sporeutility
+daa2ef5954beb897b318d717133a7810fec21dce assets/sporeutility/blockstates/afu.json
 7105dbe4a06295a58cb08090be4e3861a107a708 assets/sporeutility/blockstates/cdu_filler.json
+baf1bd0fbde5a118b266b196176d7a9a23e5b348 assets/sporeutility/blockstates/cleaned_air.json
+110f34875ee188f4b02c846e4dd8a9acc0d1a90a assets/sporeutility/models/block/afu.json
 5ea522a8a813e32b5d0e91afb34d333ef9e97d37 assets/sporeutility/models/block/cdu_filler.json
+650ccc99870edd0214f23cf9f2722603c888c1b6 assets/sporeutility/models/block/cleaned_air.json
+5da9841220d88a184a833abec14d7463d960a2e2 assets/sporeutility/models/item/afu.json
 6febef20748d792264bcd9d137f2a3e31e728f8b assets/sporeutility/models/item/cdu_filler.json

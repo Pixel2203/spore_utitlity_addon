@@ -1,2 +1,4 @@
-// 1.20.1	2026-04-21T21:21:30.289789	Loot Tables
-f5c037b288c3ec4a81aa1756d712c87ba5e4e801 data/sporeutility/loot_tables/blocks/cdu_filler.json
+// 1.20.1	2026-04-23T17:01:03.1870631	Loot Tables
+fff69a69b2e33f13d9cebafef2670a84d1650383 data/sporeutility/loot_tables/blocks/afu.json
+7cb8635f7a709c4758d53007bccd5ed32bfd8a1e data/sporeutility/loot_tables/blocks/cdu_filler.json
+9a121276493a4790f177d926691e0019f5c1fbd6 data/sporeutility/loot_tables/blocks/cleaned_air.json
