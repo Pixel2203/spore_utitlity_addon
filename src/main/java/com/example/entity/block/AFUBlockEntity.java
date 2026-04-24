@@ -6,6 +6,7 @@ import com.example.afu.RoomScanner;
 import com.example.afu.ScanResult;
 import com.example.blocks.BlockRegistry;
 import com.example.errors.BlockLimitExceededException;
+import com.example.examplemod.Config;
 import com.example.menu.AFUMenu;
 import com.example.util.ITickableBlockEntity;
 import net.minecraft.core.BlockPos;
@@ -38,10 +39,10 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
     private final AFUContext context;
     private final RoomScanner scanner;
 
-    public AFUBlockEntity(BlockPos p_155229_, BlockState p_155230_) {
-        super(BlockEntityRegistry.AFUBlockEntity.get(), p_155229_, p_155230_);
-        this.context = new AFUContext(20*20);
-        this.scanner = new RoomScanner(1000);
+    public AFUBlockEntity(BlockPos blockPos, BlockState blockState) {
+        super(BlockEntityRegistry.AFUBlockEntity.get(), blockPos, blockState);
+        this.context = new AFUContext(Config.AFU_RETRY_INTERVAL.get());
+        this.scanner = new RoomScanner(Config.AFU_RETRY_INTERVAL.get());
     }
 
     public void breach(BlockPos breachedPos) {

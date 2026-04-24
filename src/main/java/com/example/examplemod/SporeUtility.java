@@ -40,14 +40,18 @@ public class SporeUtility
         IEventBus modEventBus = context.getModEventBus();
 
         // Register the commonSetup method for modloading
-        modEventBus.addListener(this::commonSetup);
 
 
         BlockRegistry.registerBlocks(modEventBus);
+        LOGGER.info("SporeUtility: Registered Blocks");
         ItemRegistry.registerItems(modEventBus);
+        LOGGER.info("SporeUtility: Registered Items");
         BlockEntityRegistry.registerBlockEntityTypes(modEventBus);
+        LOGGER.info("SporeUtility: Registered Blockentities");
         TabRegistry.registerTabs(modEventBus);
+        LOGGER.info("SporeUtility: Registered Creative Tabs");
         ModMenuTypes.register(modEventBus);
+        LOGGER.info("SporeUtility: Registered Mod Menu Types");
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
@@ -55,11 +59,6 @@ public class SporeUtility
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
     }
 
-    private void commonSetup(final FMLCommonSetupEvent event)
-    {
-
-        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
-    }
 
     // You can use EventBusSubscriber to automatically register all static methods in the class annotated with @SubscribeEvent
     @Mod.EventBusSubscriber(modid = MODID, bus = Mod.EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)

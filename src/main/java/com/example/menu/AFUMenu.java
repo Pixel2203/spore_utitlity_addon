@@ -86,7 +86,7 @@ public class AFUMenu extends AbstractContainerMenu {
         return stillValid(
                 ContainerLevelAccess.create(this.level, this.afu.getBlockPos()),
                 player,
-                BlockRegistry.CDUFiller.get()
+                BlockRegistry.AFU.get()
         );
     }
 
