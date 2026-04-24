@@ -49,7 +49,7 @@ public class CDUFillerBlockEntity extends BlockEntity implements ITickableBlockE
     }
 
     @Override
-    public void tick() {
+    public void tick(ServerLevel level) {
          if(connectedCDUs.isEmpty()) return;
          if(!hasIceCanister()) return;
 

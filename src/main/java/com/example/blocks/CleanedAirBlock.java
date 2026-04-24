@@ -4,6 +4,7 @@ import com.example.afu.AFUManager;
 import com.example.entity.block.AFUBlockEntity;
 import com.example.entity.block.CDUFillerBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.AirBlock;
 import net.minecraft.world.level.block.Block;
@@ -39,7 +40,7 @@ public class CleanedAirBlock extends Block {
                 level.setBlock(thisBlockPos, Blocks.AIR.defaultBlockState(),3);
                 return;
             }
-            afu.breach();
+            afu.breach((ServerLevel) level, afu.getBlockPos());
         }
 
 

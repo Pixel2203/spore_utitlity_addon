@@ -4,6 +4,7 @@ import com.example.entity.block.AFUBlockEntity;
 import com.example.entity.block.BlockEntityRegistry;
 import com.example.util.ITickableBlockEntity;
 import net.minecraft.core.BlockPos;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Objects;
 
 public class AFUBlock extends Block implements EntityBlock {
     private static final Logger log = LoggerFactory.getLogger(AFUBlock.class);
@@ -33,11 +34,11 @@ public class AFUBlock extends Block implements EntityBlock {
 
         AFUBlockEntity entity = (AFUBlockEntity) level.getBlockEntity(blockPos);
         if(Objects.isNull(entity)) {
-            log.error("AFUBlockEntity is null");
+            log.error("AFUBlock.onPlace: AFUBlockEntity is null");
             return;
         }
 
-        entity.seal(level, blockPos);
+        entity.seal((ServerLevel) level);
     }
 
     @Override
@@ -45,13 +46,14 @@ public class AFUBlock extends Block implements EntityBlock {
 
         if(level.isClientSide()) {
             super.onRemove(p_60515_, level, blockPos, p_60518_, p_60519_);
+            return;
         };
         AFUBlockEntity entity = (AFUBlockEntity) level.getBlockEntity(blockPos);
         if(Objects.isNull(entity)) {
-            log.error("AFUBlockEntity is null");
+            log.error("AFUBlock.onRemove: AFUBlockEntity is null");
             return;
         }
-        entity.unseal(level, blockPos);
+        entity.unseal((ServerLevel) level);
         super.onRemove(p_60515_, level, blockPos, p_60518_, p_60519_);
     }
 
