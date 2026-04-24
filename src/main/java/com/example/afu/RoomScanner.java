@@ -1,24 +1,19 @@
 package com.example.afu;
 
 import com.example.errors.BlockLimitExceededException;
-import lombok.RequiredArgsConstructor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import oshi.util.tuples.Pair;
 
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
-@RequiredArgsConstructor
-public class RoomScanner {
-
-    private final int maxBlocksLimit;
+public record RoomScanner(int maxBlocksLimit) {
 
     public ScanResult scan(ServerLevel level, BlockPos startPos) {
         // 1. Hier speichern wir alle Positionen, die wir schon besucht haben
@@ -31,7 +26,7 @@ public class RoomScanner {
         queue.add(startPos);
         //visited.add(startPos);
 
-        while (!queue.isEmpty() ) {
+        while (!queue.isEmpty()) {
             BlockPos current = queue.poll();
             // Prüfe alle 6 Richtungen
             for (Direction dir : Direction.values()) {
@@ -39,10 +34,10 @@ public class RoomScanner {
 
                 // Nur weitermachen, wenn wir dort noch nicht waren UND es Luft ist
                 BlockState neighborState = level.getBlockState(neighbor);
-                if(!canFlow(level, neighborState, neighbor)) continue;
-                if(sealed.contains(neighbor)) continue;
+                if (!canFlow(level, neighborState, neighbor)) continue;
+                if (sealed.contains(neighbor)) continue;
 
-                if(neighborState.is(Blocks.AIR)) {
+                if (neighborState.is(Blocks.AIR)) {
                     toBeReplaced.add(neighbor);
                 }
 

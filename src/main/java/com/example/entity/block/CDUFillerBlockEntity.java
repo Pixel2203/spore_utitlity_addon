@@ -269,7 +269,7 @@ public class CDUFillerBlockEntity extends BlockEntity implements ITickableBlockE
 
     @Override
     public Component getDisplayName() {
-        return Component.literal("cdu_filler");
+        return Component.literal("menus.cdu_filler");
     }
 
     @Override

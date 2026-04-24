@@ -12,5 +12,6 @@ public class TabFactory {
                     .title(Component.translatable("creativetab.main_tab"))
                     .displayItems((parameters, output) -> {
                         output.accept(BlockRegistry.CDUFiller.get());
+                        output.accept(BlockRegistry.AFU.get());
                     }).build();
 }

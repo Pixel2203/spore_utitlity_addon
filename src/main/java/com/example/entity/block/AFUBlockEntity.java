@@ -6,11 +6,17 @@ import com.example.afu.RoomScanner;
 import com.example.afu.ScanResult;
 import com.example.blocks.BlockRegistry;
 import com.example.errors.BlockLimitExceededException;
+import com.example.menu.AFUMenu;
 import com.example.util.ITickableBlockEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.MenuProvider;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -24,7 +30,7 @@ import oshi.util.tuples.Pair;
 
 import java.util.*;
 
-public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity {
+public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity, MenuProvider {
 
     private static final Logger log = LoggerFactory.getLogger(AFUBlockEntity.class);
 
@@ -121,7 +127,7 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity 
 
         Level level = getLevel();
         if(level.isClientSide()) return;
-        if(!context.isSealed()) {
+        if(context.isWasSealed()) {
             this.seal((ServerLevel) level);
         }
     }
@@ -133,4 +139,15 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity 
         }
         super.onChunkUnloaded();
     }
+
+    @Override
+    public Component getDisplayName() {
+        return Component.translatable("menus.afu");
+    }
+
+    @Override
+    public @Nullable AbstractContainerMenu createMenu(int p_39954_, Inventory p_39955_, Player p_39956_) {
+        return new AFUMenu(p_39954_, p_39955_, this);
+    }
+
 }

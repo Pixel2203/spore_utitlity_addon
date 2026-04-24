@@ -17,6 +17,11 @@ public class ModMenuTypes {
 
     public static final RegistryObject<MenuType<CDUFillerMenu>> CDU_FILLER_MENU =
             registerMenuType("cdu_filler_menu", CDUFillerMenu::new);
+
+
+    public static final RegistryObject<MenuType<AFUMenu>> AFU_MENU =
+            registerMenuType("afu_menu", AFUMenu::new);
+
     private static <T extends AbstractContainerMenu> RegistryObject<MenuType<T>> registerMenuType(String name, IContainerFactory<T> factory) {
         return MOD_MENU_TYPE.register(name,() -> IForgeMenuType.create(factory));
     }

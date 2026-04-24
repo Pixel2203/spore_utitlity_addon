@@ -15,6 +15,9 @@ import java.util.Set;
 public class AFUContext {
     private final int autoRetryInterval;
 
+
+    @Setter
+    private boolean wasSealed = false;
     @Setter
     private boolean isSealed = false;
     @Setter
@@ -29,36 +32,15 @@ public class AFUContext {
     }
 
     public void loadFromNbt(CompoundTag compoundTag) {
-        this.isSealed = compoundTag.getBoolean("isSealed");
+        this.wasSealed = compoundTag.getBoolean("wasSealed");
         this.ticker = compoundTag.getInt("ticker");
-
-        this.sealedBlocks.clear();
-        long[] sealedArray = compoundTag.getLongArray("sealedBlocks");
-        for (long l : sealedArray) {
-            this.sealedBlocks.add(BlockPos.of(l));
-        }
-
-        // Replaced Air Blocks laden
-        this.replacedAirBlocks.clear();
-        long[] replacedArray = compoundTag.getLongArray("replacedAirBlocks");
-        for (long l : replacedArray) {
-            this.replacedAirBlocks.add(BlockPos.of(l));
-        }
     }
 
     public void saveToNbt(CompoundTag compoundTag) {
-        compoundTag.putBoolean("isSealed", isSealed);
+        compoundTag.putBoolean("wasSealed", isSealed);
         compoundTag.putInt("ticker", ticker);
 
-        long[] sealedArray = this.sealedBlocks.stream()
-                .mapToLong(BlockPos::asLong)
-                .toArray();
-        compoundTag.putLongArray("sealedBlocks", sealedArray);
 
-        long[] replacedArray = this.replacedAirBlocks.stream()
-                .mapToLong(BlockPos::asLong)
-                .toArray();
-        compoundTag.putLongArray("replacedAirBlocks", replacedArray);
     }
 
 

@@ -5,6 +5,7 @@ import com.example.creativeTabs.TabRegistry;
 import com.example.entity.block.BlockEntityRegistry;
 import com.example.items.ItemRegistry;
 import com.example.menu.ModMenuTypes;
+import com.example.screen.AFUScreen;
 import com.example.screen.CDUFillerScreen;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
@@ -68,6 +69,7 @@ public class SporeUtility
         public static void onClientSetup(FMLClientSetupEvent event)
         {
             MenuScreens.register(ModMenuTypes.CDU_FILLER_MENU.get(), CDUFillerScreen::new);
+            MenuScreens.register(ModMenuTypes.AFU_MENU.get(), AFUScreen::new);
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
