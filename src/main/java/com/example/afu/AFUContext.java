@@ -15,9 +15,6 @@ import java.util.Set;
 public class AFUContext {
     private final int autoRetryInterval;
 
-
-    @Setter
-    private boolean wasSealed = false;
     @Setter
     private boolean isSealed = false;
     @Setter
@@ -32,12 +29,12 @@ public class AFUContext {
     }
 
     public void loadFromNbt(CompoundTag compoundTag) {
-        this.wasSealed = compoundTag.getBoolean("wasSealed");
+        this.isSealed = compoundTag.getBoolean("isSealed");
         this.ticker = compoundTag.getInt("ticker");
     }
 
     public void saveToNbt(CompoundTag compoundTag) {
-        compoundTag.putBoolean("wasSealed", isSealed);
+        compoundTag.putBoolean("isSealed", isSealed);
         compoundTag.putInt("ticker", ticker);
 
 

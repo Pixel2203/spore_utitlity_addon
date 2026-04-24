@@ -40,7 +40,7 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
 
     public AFUBlockEntity(BlockPos p_155229_, BlockState p_155230_) {
         super(BlockEntityRegistry.AFUBlockEntity.get(), p_155229_, p_155230_);
-        this.context = new AFUContext(20*60);
+        this.context = new AFUContext(20*20);
         this.scanner = new RoomScanner(1000);
     }
 
@@ -53,7 +53,7 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
 
 
     public void seal(@NotNull ServerLevel level) {
-        if(context.isSealed()) {
+        if(context.isSealed() && !this.context.getSealedBlocks().isEmpty() && !this.context.getReplacedAirBlocks().isEmpty()) {
             log.warn(("AFUBlockEntity.seal: Unable to seal as AFU is already sealed"));
             return;
         }
@@ -127,18 +127,26 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
 
         Level level = getLevel();
         if(level.isClientSide()) return;
-        if(context.isWasSealed()) {
+        if(context.isSealed()) {
             this.seal((ServerLevel) level);
         }
     }
 
+    /**
+     * Well well well, this is a fince piece of shit, you see the setSealed(true) after the unseal and wonder why ?
+     * Yeah well lets just put it simple, onChunkUnloaded will be called multiple times, so now you would be asking yourself, WAIT WHAT?
+     * Lets put it this way, saveAdditional --> onChunkUnloaded --> unseal --> AFUMANAGER --> setBlock --> Loads Chunks --> onLoad() --> saveAdditional --> onChunkUnloaded --> unseal --> returns because sealedBlocks is empty
+     */
     @Override
     public void onChunkUnloaded() {
+        super.onChunkUnloaded();
         if(context.isSealed()) {
             this.unseal((ServerLevel) level);
+            this.context.setSealed(true);
         }
-        super.onChunkUnloaded();
+
     }
+
 
     @Override
     public Component getDisplayName() {

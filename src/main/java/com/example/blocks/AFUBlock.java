@@ -72,4 +72,5 @@ public class AFUBlock extends Block implements EntityBlock {
         NetworkHooks.openScreen((ServerPlayer) player, afu, blockPos);
         return InteractionResult.SUCCESS;
     }
+
 }
