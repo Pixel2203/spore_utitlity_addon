@@ -19,6 +19,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -49,7 +50,28 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
 
     public AFUBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(BlockEntityRegistry.AFUBlockEntity.get(), blockPos, blockState);
-        this.context = new AFUContext(Config.AFU_RETRY_INTERVAL.get());
+
+        ContainerData containerData = new ContainerData() {
+            @Override
+            public int get(int id) {
+                if(id != 0) throw new IndexOutOfBoundsException("Provided an id that is not covered by ContainerData");
+                return AFUBlockEntity.this.context.isActive() ? 1 : 0;
+            }
+
+            @Override
+            public void set(int id, int value) {
+                if(id != 0) throw new IndexOutOfBoundsException("Provided an id that is not covered by ContainerData");
+                if(value != 0 && value != 1) throw new IndexOutOfBoundsException("Provided an id that is not covered by ContainerData");
+                AFUBlockEntity.this.context.setActive(value == 1);
+            }
+
+            @Override
+            public int getCount() {
+                return 1;
+            }
+        };
+
+        this.context = new AFUContext(Config.AFU_RETRY_INTERVAL.get(), containerData);
         this.scanner = new RoomScanner(Config.AFU_RETRY_INTERVAL.get());
     }
 
@@ -61,7 +83,6 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
         Level level = getLevel();
         if(level.isClientSide()) return;
         this.unseal((ServerLevel) level);
-        this.seal((ServerLevel) level);
     }
 
 
@@ -79,6 +100,7 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
 
             log.debug("Blocks to supply: {}", context.getSealedBlocks().size());
             context.setSealed(true);
+            this.setChanged();
         }catch (BlockLimitExceededException e) {
             log.error(e.getMessage());
         }
@@ -104,6 +126,7 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
         sealedBlocks.clear();
         replacedAirBlocks.clear();
         context.setSealed(false);
+        this.setChanged();
     }
 
 
@@ -143,6 +166,7 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
         if(context.isSealed()) {
             this.seal((ServerLevel) level);
         }
+
     }
 
     /**
@@ -167,8 +191,8 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
     }
 
     @Override
-    public @Nullable AbstractContainerMenu createMenu(int id, Inventory inv, Player p_39956_) {
-        return new AFUMenu(id, inv, this, new SimpleContainerData(1));
+    public @Nullable AbstractContainerMenu createMenu(int id, Inventory inv, Player player) {
+        return new AFUMenu(id, inv, this, context.getContainerData());
     }
 
 
@@ -231,10 +255,13 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
     }
 
     public void toggleActive() {
+        ServerLevel level = (ServerLevel) getLevel();
         context.setActive(!context.isActive());
-        setChanged();
-        if (level != null && !level.isClientSide()) {
-            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        if (context.isActive()) {
+            seal(level);
+        } else {
+            unseal(level);
         }
+        setChanged();
     }
 }

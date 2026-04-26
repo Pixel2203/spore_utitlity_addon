@@ -71,8 +71,9 @@ public class AFUScreen extends AbstractContainerScreen<AFUMenu> {
     @Override
     protected void containerTick() {
         super.containerTick();
-        // Sync visual state from menu (which is synced from server)
-        this.powerButton.setToggled(this.menu.isActive());
+        if (this.powerButton != null) {
+            this.powerButton.setToggled(this.menu.isActive());
+        }
     }
 
 

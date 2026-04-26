@@ -50,7 +50,7 @@ public class AFUManager {
         replacedAirBlocks.forEach(pos -> {
             BlockState state = level.getBlockState(pos);
             if(state.is(BlockRegistry.CleanedAir.get())) {
-                level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
+               // level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
             }
         });
     }
@@ -60,11 +60,15 @@ public class AFUManager {
         airBlocks.forEach(pos -> AIR_MAP.put(pos, afu));
 
         airBlocks.forEach((pos) -> {
-            level.setBlock(pos, BlockRegistry.CleanedAir.get().defaultBlockState(), 2);
+         //   level.setBlock(pos, BlockRegistry.CleanedAir.get().defaultBlockState(), 2);
         });
     }
 
     public static AFUBlockEntity getOwner(BlockPos airPos) {
         return AIR_MAP.get(airPos);
+    }
+
+    public static AFUBlockEntity getSealedOwner(BlockPos changedPos) {
+        return SEALED_MAP.get(changedPos);
     }
 }

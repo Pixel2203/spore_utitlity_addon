@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.inventory.ContainerData;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
@@ -22,13 +23,11 @@ public class AFUContext {
     private final Set<BlockPos> sealedBlocks = new HashSet<>();
     private final Set<BlockPos> replacedAirBlocks = new HashSet<>();
     private final ItemStackHandler inventory = new ItemStackHandler(1);
-
+    private final ContainerData containerData;
 
     private boolean isSealed = false;
     private int ticker = 0;
     private boolean isActive = false;
-
-
 
 
     private LazyOptional<IItemHandler> lazyOptional = LazyOptional.empty();
