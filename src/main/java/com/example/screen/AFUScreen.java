@@ -4,6 +4,9 @@ import com.example.examplemod.SporeUtility;
 import com.example.menu.AFUMenu;
 import com.example.menu.CDUFillerMenu;
 import com.example.menu.ModMenuTypes;
+import com.example.network.AFUTogglePacket;
+import com.example.network.PacketHandler;
+import com.example.screen.components.ToggleImageButton;
 import com.mojang.blaze3d.systems.RenderSystem;
 import lombok.extern.slf4j.Slf4j;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,6 +20,8 @@ import net.minecraft.world.entity.player.Inventory;
 @Slf4j
 public class AFUScreen extends AbstractContainerScreen<AFUMenu> {
     private static final ResourceLocation TEXTURE = ResourceLocation.fromNamespaceAndPath(SporeUtility.MODID,"textures/gui/afu-menu.png");
+    private ToggleImageButton powerButton;
+
     public AFUScreen(AFUMenu p_97741_, Inventory p_97742_, Component p_97743_) {
         super(p_97741_, p_97742_, p_97743_);
     }
@@ -40,16 +45,20 @@ public class AFUScreen extends AbstractContainerScreen<AFUMenu> {
         this.inventoryLabelY = 1000000;
         this.titleLabelY = 1000000;
 
-        this.addRenderableWidget(new ImageButton(
+        this.powerButton = new ToggleImageButton(
                 this.leftPos + 11,
                 this.topPos + 16,
                 17,
                 18,
                 176,
                 0,
-                18, TEXTURE, (button) -> {
-            log.info("AFUScreen.button_click: Wurde Geklicked!");
-        }));
+                18,
+                TEXTURE,
+                (button) -> {
+                    PacketHandler.sendToServer( new AFUTogglePacket(this.menu.getBlockEntity().getBlockPos()));
+                }
+        );
+        this.addRenderableWidget(this.powerButton);
     }
 
     @Override
@@ -57,6 +66,13 @@ public class AFUScreen extends AbstractContainerScreen<AFUMenu> {
         renderBackground(p_283479_);
         super.render(p_283479_, p_283661_, p_281248_, p_281886_);
         renderTooltip(p_283479_, p_283661_, p_281248_);
+    }
+
+    @Override
+    protected void containerTick() {
+        super.containerTick();
+        // Sync visual state from menu (which is synced from server)
+        this.powerButton.setToggled(this.menu.isActive());
     }
 
 

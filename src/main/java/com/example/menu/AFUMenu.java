@@ -121,5 +121,9 @@ public class AFUMenu extends AbstractContainerMenu {
         }
     }
 
+    public AFUBlockEntity getBlockEntity() {
+        return this.afu;
+    }
+
 
 }

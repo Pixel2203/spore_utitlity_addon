@@ -3,23 +3,27 @@ package com.example.screen.components;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
-import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 public class ToggleImageButton extends AbstractWidget {
+    @FunctionalInterface
+    public interface OnPress {
+        void onPress(ToggleImageButton button);
+    }
+
     private final ResourceLocation texture;
     private final int xTexStart;
     private final int yTexStart;
     private final int yDiffTex;
-    private final Button.OnPress onPress;
+    private final OnPress onPress;
     private boolean toggled = false;
 
     public ToggleImageButton(int x, int y, int width, int height,
                              int xTexStart, int yTexStart, int yDiffTex,
-                             ResourceLocation texture, Button.OnPress onPress) {
+                             ResourceLocation texture, OnPress onPress) {
         super(x, y, width, height, Component.empty());
         this.texture = texture;
         this.xTexStart = xTexStart;

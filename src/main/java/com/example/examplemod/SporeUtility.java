@@ -5,6 +5,7 @@ import com.example.creativeTabs.TabRegistry;
 import com.example.entity.block.BlockEntityRegistry;
 import com.example.items.ItemRegistry;
 import com.example.menu.ModMenuTypes;
+import com.example.network.PacketHandler;
 import com.example.screen.AFUScreen;
 import com.example.screen.CDUFillerScreen;
 import com.mojang.logging.LogUtils;
@@ -40,7 +41,7 @@ public class SporeUtility
         IEventBus modEventBus = context.getModEventBus();
 
         // Register the commonSetup method for modloading
-
+        modEventBus.addListener(this::commonSetup);
 
         BlockRegistry.registerBlocks(modEventBus);
         LOGGER.info("SporeUtility: Registered Blocks");
@@ -57,6 +58,12 @@ public class SporeUtility
 
         // Register our mod's ForgeConfigSpec so that Forge can create and load the config file for us
         context.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+    }
+
+    private void commonSetup(final FMLCommonSetupEvent event)
+    {
+        LOGGER.info("SporeUtility.commonSetup: Registering channels");
+        PacketHandler.registerChannel();
     }
 
 
