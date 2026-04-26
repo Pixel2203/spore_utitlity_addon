@@ -29,6 +29,14 @@ public class AFUMenu extends AbstractContainerMenu {
         afu =  (AFUBlockEntity) blockEntity;
         this.level = blockEntity.getLevel();
 
+        addPlayerInventory(inventory);
+        addPlayerHotbar(inventory);
+
+
+        this.afu.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler ->
+                this.addSlot(new SlotItemHandler(handler, 0, 134, 16)));
+
+
     }
     // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
     // must assign a slot number to each of the slots used by the GUI.
@@ -88,6 +96,24 @@ public class AFUMenu extends AbstractContainerMenu {
                 player,
                 BlockRegistry.AFU.get()
         );
+    }
+
+    public boolean isActive() {
+        return this.afu.isActive();
+    }
+
+    private void addPlayerInventory(Inventory inventory) {
+        for(int i = 0; i < 3; ++i) {
+            for(int j = 0; j < 9; ++j) {
+                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+            }
+        }
+    }
+
+    private void addPlayerHotbar(Inventory inventory) {
+        for(int k = 0; k < 9; ++k) {
+            this.addSlot(new Slot(inventory, k, 8 + k * 18, 142));
+        }
     }
 
 

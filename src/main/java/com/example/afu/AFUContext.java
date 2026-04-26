@@ -19,6 +19,8 @@ public class AFUContext {
     private boolean isSealed = false;
     @Setter
     private int ticker = 0;
+    @Setter
+    private boolean isActive = false;
 
     private Set<BlockPos> sealedBlocks = new HashSet<>();
     private Set<BlockPos> replacedAirBlocks = new HashSet<>();
@@ -31,11 +33,13 @@ public class AFUContext {
     public void loadFromNbt(CompoundTag compoundTag) {
         this.isSealed = compoundTag.getBoolean("isSealed");
         this.ticker = compoundTag.getInt("ticker");
+        this.isActive = compoundTag.getBoolean("isActive");
     }
 
     public void saveToNbt(CompoundTag compoundTag) {
         compoundTag.putBoolean("isSealed", isSealed);
         compoundTag.putInt("ticker", ticker);
+        compoundTag.putBoolean("isActive", isActive);
 
 
     }
