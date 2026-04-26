@@ -6,9 +6,7 @@ import com.example.entity.block.CDUFillerBlockEntity;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -19,25 +17,29 @@ import org.jetbrains.annotations.Nullable;
 public class AFUMenu extends AbstractContainerMenu {
     private final AFUBlockEntity afu;
     private final Level level;
+    private final ContainerData data;
 
     public AFUMenu(int containerId, Inventory inv, FriendlyByteBuf buf) {
-        this(containerId, inv, inv.player.level().getBlockEntity(buf.readBlockPos()));
+        this(containerId, inv, inv.player.level().getBlockEntity(buf.readBlockPos()), new SimpleContainerData(1));
     }
 
-    public AFUMenu(int containerId, Inventory inventory, @Nullable BlockEntity blockEntity) {
+    public AFUMenu(int containerId, Inventory inventory, @Nullable BlockEntity blockEntity, ContainerData containerData) {
         super(ModMenuTypes.AFU_MENU.get(), containerId);
         afu =  (AFUBlockEntity) blockEntity;
         this.level = blockEntity.getLevel();
+        this.data = containerData;
 
         addPlayerInventory(inventory);
         addPlayerHotbar(inventory);
 
 
         this.afu.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(handler ->
-                this.addSlot(new SlotItemHandler(handler, 0, 134, 16)));
+                this.addSlot(new SlotItemHandler(handler, 0, 135, 17)));
 
-
+        addDataSlots(this.data);
+        this.data.set(0, this.afu.isActive() ? 1 : 0);
     }
+
     // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
     // must assign a slot number to each of the slots used by the GUI.
     // For this container, we can see both the tile inventory's slots as well as the player inventory slots and the hotbar.
@@ -55,6 +57,9 @@ public class AFUMenu extends AbstractContainerMenu {
 
     // THIS YOU HAVE TO DEFINE!
     private static final int TE_INVENTORY_SLOT_COUNT = 1;  // must be the number of slots you have!
+
+
+
     @Override
     public ItemStack quickMoveStack(Player playerIn, int pIndex) {
         Slot sourceSlot = slots.get(pIndex);
@@ -99,20 +104,20 @@ public class AFUMenu extends AbstractContainerMenu {
     }
 
     public boolean isActive() {
-        return this.afu.isActive();
+        return this.data.get(0) == 1;
     }
 
     private void addPlayerInventory(Inventory inventory) {
         for(int i = 0; i < 3; ++i) {
             for(int j = 0; j < 9; ++j) {
-                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 84 + i * 18));
+                this.addSlot(new Slot(inventory, j + i * 9 + 9, 8 + j * 18, 51 + i * 18));
             }
         }
     }
 
     private void addPlayerHotbar(Inventory inventory) {
         for(int k = 0; k < 9; ++k) {
-            this.addSlot(new Slot(inventory, k, 8 + k * 18, 142));
+            this.addSlot(new Slot(inventory, k, 8 + k * 18, 109));
         }
     }
 

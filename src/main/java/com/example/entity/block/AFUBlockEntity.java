@@ -19,6 +19,7 @@ import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.SimpleContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
@@ -54,14 +55,6 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
 
     public boolean isActive() {
         return context.isActive();
-    }
-
-    public void activate() {
-
-    }
-
-    public void deactivate() {
-
     }
 
     public void breach(BlockPos breachedPos) {
@@ -144,7 +137,7 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
     @Override
     public void onLoad() {
         super.onLoad();
-
+        context.setLazyOptional(LazyOptional.of(context::getInventory)); ;
         Level level = getLevel();
         if(level.isClientSide()) return;
         if(context.isSealed()) {
@@ -174,35 +167,35 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
     }
 
     @Override
-    public @Nullable AbstractContainerMenu createMenu(int p_39954_, Inventory p_39955_, Player p_39956_) {
-        return new AFUMenu(p_39954_, p_39955_, this);
+    public @Nullable AbstractContainerMenu createMenu(int id, Inventory inv, Player p_39956_) {
+        return new AFUMenu(id, inv, this, new SimpleContainerData(1));
     }
 
-    private final ItemStackHandler inventory = new ItemStackHandler(1);
-    private LazyOptional<IItemHandler> lazyOptional = LazyOptional.empty();
+
 
     @Override
     public int getContainerSize() {
-        return inventory.getSlots();
+        return context.getInventory().getSlots();
     }
 
     @Override
     public boolean isEmpty() {
-        return inventory.getStackInSlot(0).isEmpty();
+        return context.getInventory().getStackInSlot(0).isEmpty();
     }
 
     @Override
     public ItemStack getItem(int slot) {
-        return inventory.getStackInSlot(slot);
+        return context.getInventory().getStackInSlot(slot);
     }
 
     @Override
     public ItemStack removeItem(int slot, int amount) {
-        return inventory.extractItem(slot, amount, false);
+        return context.getInventory().extractItem(slot, amount, false);
     }
 
     @Override
     public ItemStack removeItemNoUpdate(int slot) {
+        ItemStackHandler inventory = context.getInventory();
         ItemStack stack = inventory.getStackInSlot(slot);
         inventory.setStackInSlot(slot, ItemStack.EMPTY);
         return stack;
@@ -210,7 +203,7 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
 
     @Override
     public void setItem(int slot, ItemStack stack) {
-        inventory.setStackInSlot(slot, stack);
+        context.getInventory().setStackInSlot(slot, stack);
     }
 
     @Override
@@ -220,20 +213,28 @@ public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity,
 
     @Override
     public void clearContent() {
-        inventory.setStackInSlot(0, ItemStack.EMPTY);
+        context.getInventory().setStackInSlot(0, ItemStack.EMPTY);
     }
 
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
         if(cap == ForgeCapabilities.ITEM_HANDLER) {
-            return this.lazyOptional.cast();
+            return context.getLazyOptional().cast();
         }
         return super.getCapability(cap);
     }
     @Override
     public void invalidateCaps() {
         super.invalidateCaps();
-        this.lazyOptional.invalidate();
+        this.context.getLazyOptional().invalidate();
 
+    }
+
+    public void toggleActive() {
+        context.setActive(!context.isActive());
+        setChanged();
+        if (level != null && !level.isClientSide()) {
+            level.sendBlockUpdated(worldPosition, getBlockState(), getBlockState(), 3);
+        }
     }
 }
