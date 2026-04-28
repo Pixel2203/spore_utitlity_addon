@@ -15,7 +15,7 @@ import java.util.Set;
 
 public record RoomScanner(int maxBlocksLimit) {
 
-    public ScanResult scan(ServerLevel level, BlockPos startPos) {
+    public ScanResult scan(ServerLevel level, BlockPos startPos) throws BlockLimitExceededException {
         // 1. Hier speichern wir alle Positionen, die wir schon besucht haben
         Set<BlockPos> sealed = new HashSet<>();
         Set<BlockPos> toBeReplaced = new HashSet<>();
@@ -25,6 +25,11 @@ public record RoomScanner(int maxBlocksLimit) {
         // Wir starten beim Block direkt am Air Purifier
         queue.add(startPos);
         //visited.add(startPos);
+
+        BlockState startedState = level.getBlockState(startPos);
+        if(canFlow(level, startedState, startPos)) {
+            sealed.add(startPos);
+        }
 
         while (!queue.isEmpty()) {
             BlockPos current = queue.poll();
@@ -54,7 +59,53 @@ public record RoomScanner(int maxBlocksLimit) {
         return new ScanResult(sealed, toBeReplaced);
     }
 
-    private boolean canFlow(Level level, BlockState state, BlockPos pos) {
+    public ScanResult incrementalScan(ServerLevel level, BlockPos startPos) throws BlockLimitExceededException {
+        // 1. Hier speichern wir alle Positionen, die wir schon besucht haben
+        Set<BlockPos> sealed = new HashSet<>();
+        Set<BlockPos> toBeReplaced = new HashSet<>();
+        // 2. Hier kommen die Blöcke rein, die noch geprüft werden müssen
+        Queue<BlockPos> queue = new LinkedList<>();
+
+        // Wir starten beim Block direkt am Air Purifier
+        queue.add(startPos);
+        //visited.add(startPos);
+
+        BlockState startedState = level.getBlockState(startPos);
+        if(canFlow(level, startedState, startPos)) {
+            sealed.add(startPos);
+        }
+
+        while (!queue.isEmpty()) {
+            BlockPos current = queue.poll();
+            // Prüfe alle 6 Richtungen
+            for (Direction dir : Direction.values()) {
+                BlockPos neighbor = current.relative(dir);
+
+                // Nur weitermachen, wenn wir dort noch nicht waren UND es Luft ist
+                BlockState neighborState = level.getBlockState(neighbor);
+                if (!canFlow(level, neighborState, neighbor)) continue;
+                if (sealed.contains(neighbor) || AFUManager.isSealed(neighbor)) continue;
+
+                if (neighborState.is(Blocks.AIR)) {
+                    toBeReplaced.add(neighbor);
+                }
+
+                sealed.add(neighbor);
+                queue.add(neighbor);
+
+                // Sicherheitsstopp
+                if (sealed.size() > this.maxBlocksLimit) {
+                    throw new BlockLimitExceededException("Room to seal is not allowed to exceed " + this.maxBlocksLimit + " blocks!");
+                }
+
+            }
+        }
+        return new ScanResult(sealed, toBeReplaced);
+    }
+
+
+
+    public static boolean canFlow(Level level, BlockState state, BlockPos pos) {
         return state.is(Blocks.AIR) || state.canBeReplaced() || !state.isCollisionShapeFullBlock(level, pos);
     }
 

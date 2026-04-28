@@ -1,9 +1,6 @@
 package com.example.entity.block;
 
-import com.example.afu.AFUContext;
-import com.example.afu.AFUManager;
-import com.example.afu.RoomScanner;
-import com.example.afu.ScanResult;
+import com.example.afu.*;
 import com.example.blocks.BlockRegistry;
 import com.example.errors.BlockLimitExceededException;
 import com.example.examplemod.Config;
@@ -40,108 +37,13 @@ import oshi.util.tuples.Pair;
 
 import java.util.*;
 
-public class AFUBlockEntity extends BlockEntity implements ITickableBlockEntity, MenuProvider, Container {
+public class AFUBlockEntity extends AFUBaseEntity implements MenuProvider, Container {
 
     private static final Logger log = LoggerFactory.getLogger(AFUBlockEntity.class);
 
-
-    private final AFUContext context;
-    private final RoomScanner scanner;
-
     public AFUBlockEntity(BlockPos blockPos, BlockState blockState) {
-        super(BlockEntityRegistry.AFUBlockEntity.get(), blockPos, blockState);
+        super(blockPos, blockState);
 
-        ContainerData containerData = new ContainerData() {
-            @Override
-            public int get(int id) {
-                if(id != 0) throw new IndexOutOfBoundsException("Provided an id that is not covered by ContainerData");
-                return AFUBlockEntity.this.context.isActive() ? 1 : 0;
-            }
-
-            @Override
-            public void set(int id, int value) {
-                if(id != 0) throw new IndexOutOfBoundsException("Provided an id that is not covered by ContainerData");
-                if(value != 0 && value != 1) throw new IndexOutOfBoundsException("Provided an id that is not covered by ContainerData");
-                AFUBlockEntity.this.context.setActive(value == 1);
-            }
-
-            @Override
-            public int getCount() {
-                return 1;
-            }
-        };
-
-        this.context = new AFUContext(Config.AFU_RETRY_INTERVAL.get(), containerData);
-        this.scanner = new RoomScanner(Config.AFU_RETRY_INTERVAL.get());
-    }
-
-    public boolean isActive() {
-        return context.isActive();
-    }
-
-    public void breach(BlockPos breachedPos) {
-        Level level = getLevel();
-        if(level.isClientSide()) return;
-        this.unseal((ServerLevel) level);
-    }
-
-
-    public void seal(@NotNull ServerLevel level) {
-        if(context.isSealed() && !this.context.getSealedBlocks().isEmpty() && !this.context.getReplacedAirBlocks().isEmpty()) {
-            log.warn(("AFUBlockEntity.seal: Unable to seal as AFU is already sealed"));
-            return;
-        }
-        try {
-            ScanResult result = this.scanner.scan(level, getBlockPos());
-            context.getReplacedAirBlocks().addAll(result.cleanedAirBlocks());
-            context.getSealedBlocks().addAll(result.sealedBlocks());
-
-            AFUManager.registerAFU(this, context.getSealedBlocks(), context.getReplacedAirBlocks(), level);
-
-            log.debug("Blocks to supply: {}", context.getSealedBlocks().size());
-            context.setSealed(true);
-            this.setChanged();
-        }catch (BlockLimitExceededException e) {
-            log.error(e.getMessage());
-        }
-    }
-
-    public void unseal(ServerLevel level) {
-        if(!context.isSealed()) {
-            log.warn(("AFUBlockEntity.unseal: Unable to unseal as AFU is already unsealed"));
-            return;
-        }
-        Set<BlockPos> sealedBlocks = context.getSealedBlocks();
-        Set<BlockPos> replacedAirBlocks = context.getReplacedAirBlocks();
-        if(sealedBlocks.isEmpty()) {
-            log.warn("AFUBlockEntity.unseal: sealedBlocks is empty, cannot unseal");
-            return;
-        }
-        if(replacedAirBlocks.isEmpty()) {
-            log.warn("AFUBlockEntity.unseal: replacedAirBlocks is empty,  cannot unseal");
-            return;
-        }
-        AFUManager.unregisterAFU(level, sealedBlocks, replacedAirBlocks);
-
-        sealedBlocks.clear();
-        replacedAirBlocks.clear();
-        context.setSealed(false);
-        this.setChanged();
-    }
-
-
-
-
-
-
-    @Override
-    public void tick(ServerLevel level) {
-        if(context.isSealed()) return;
-        context.increaseTicker();
-        if(context.getTicker() >= context.getAutoRetryInterval()) {
-            this.seal(level);
-            context.setTicker(0);
-        }
     }
 
     @Override

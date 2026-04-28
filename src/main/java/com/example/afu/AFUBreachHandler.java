@@ -1,14 +1,10 @@
-package com.example.event;
+package com.example.afu;
 
-import com.example.afu.AFUManager;
-import com.example.afu.RoomScanner;
 import com.example.entity.block.AFUBlockEntity;
 import com.example.examplemod.SporeUtility;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -40,7 +36,7 @@ public class AFUBreachHandler {
     }
 
     private static void checkAndBreach(Level level, BlockPos changedPos) {
-        AFUBlockEntity afu = AFUManager.getOwner(changedPos);
+        AFUBaseEntity afu = AFUManager.getOwner(changedPos);
         if (afu == null) afu = AFUManager.getSealedOwner(changedPos);
 
         if (afu == null) {

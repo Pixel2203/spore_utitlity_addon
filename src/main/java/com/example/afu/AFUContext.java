@@ -20,6 +20,7 @@ import java.util.Set;
 public class AFUContext {
 
     private final int autoRetryInterval;
+    private final int autoInvalidationInterval;
     private final Set<BlockPos> sealedBlocks = new HashSet<>();
     private final Set<BlockPos> replacedAirBlocks = new HashSet<>();
     private final ItemStackHandler inventory = new ItemStackHandler(1);
@@ -28,6 +29,7 @@ public class AFUContext {
     private boolean isSealed = false;
     private int ticker = 0;
     private boolean isActive = false;
+    private int invalidationTicker = 0;
 
 
     private LazyOptional<IItemHandler> lazyOptional = LazyOptional.empty();
@@ -41,6 +43,7 @@ public class AFUContext {
         this.isSealed = compoundTag.getBoolean("isSealed");
         this.ticker = compoundTag.getInt("ticker");
         this.isActive = compoundTag.getBoolean("isActive");
+        this.invalidationTicker = compoundTag.getInt("invalidationTicker");
         this.inventory.deserializeNBT(compoundTag.getCompound("inventory"));
     }
 
@@ -48,6 +51,7 @@ public class AFUContext {
         compoundTag.putBoolean("isSealed", isSealed);
         compoundTag.putInt("ticker", ticker);
         compoundTag.putBoolean("isActive", isActive);
+        compoundTag.putInt("invalidationTicker", invalidationTicker);
         compoundTag.put("inventory", inventory.serializeNBT());
 
 

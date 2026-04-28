@@ -33,6 +33,14 @@ public class Config
             .defineInRange("afu_retry_interval", 120 * 20, 0, Integer.MAX_VALUE);
 
 
+    public static final ForgeConfigSpec.IntValue AFU_INVALIDATION_INTERVAL = BUILDER
+            .comment("The interval (in ticks) in which the afu will invalidate a room if it is sealed")
+            .comment("Default: " + 60 * 20)
+            .comment("Max: " + Integer.MAX_VALUE)
+            .comment("Min: " + 20*5)
+            .defineInRange("afu_invalidation_interval", 60 * 20, 20*5, Integer.MAX_VALUE);
+
+
     static final ForgeConfigSpec SPEC = BUILDER.build();
 
 }
