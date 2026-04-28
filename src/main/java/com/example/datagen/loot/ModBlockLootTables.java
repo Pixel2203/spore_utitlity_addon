@@ -18,7 +18,6 @@ public class ModBlockLootTables extends BlockLootSubProvider {
     @Override
     protected void generate() {
         this.dropSelf(BlockRegistry.CDUFiller.get());
-        this.dropNothing(BlockRegistry.CleanedAir.get());
         this.dropSelf(BlockRegistry.AFU.get());
     }
 

@@ -36,14 +36,11 @@ public class AFUBreachHandler {
     }
 
     private static void checkAndBreach(Level level, BlockPos changedPos) {
-        AFUBaseEntity afu = AFUManager.getOwner(changedPos);
-        if (afu == null) afu = AFUManager.getSealedOwner(changedPos);
-
+        AFUBaseEntity afu = AFUManager.getSealedOwner(changedPos);
         if (afu == null) {
             for (Direction dir : Direction.values()) {
                 BlockPos neighbor = changedPos.relative(dir);
-                afu = AFUManager.getOwner(neighbor);
-                if (afu == null) afu = AFUManager.getSealedOwner(neighbor);
+                afu = AFUManager.getSealedOwner(neighbor);
                 if (afu != null) break;
             }
         }

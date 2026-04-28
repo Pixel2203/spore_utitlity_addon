@@ -41,6 +41,7 @@ public class AFUBlockEntity extends AFUBaseEntity implements MenuProvider, Conta
 
     private static final Logger log = LoggerFactory.getLogger(AFUBlockEntity.class);
 
+
     public AFUBlockEntity(BlockPos blockPos, BlockState blockState) {
         super(blockPos, blockState);
 
@@ -98,6 +99,14 @@ public class AFUBlockEntity extends AFUBaseEntity implements MenuProvider, Conta
     }
 
 
+    private boolean isSealValid() {
+        try {
+            scanner.scan((ServerLevel) getLevel(), getBlockPos());
+            return true;
+        }catch (BlockLimitExceededException e){
+            return false;
+        }
+    }
 
     @Override
     public int getContainerSize() {

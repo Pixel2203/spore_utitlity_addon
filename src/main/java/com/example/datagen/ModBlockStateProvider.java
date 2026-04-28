@@ -32,7 +32,6 @@ public class ModBlockStateProvider extends BlockStateProvider {
         simpleBlockItem(BlockRegistry.CDUFiller.get(), cduFillerModel);
 
         blockWithItem(BlockRegistry.AFU);
-        simpleBlock(BlockRegistry.CleanedAir.get(), models().cubeAll("cleaned_air", modLoc("block/cleaned_air")).renderType("translucent"));
     }
 
     private void blockWithItem(RegistryObject<Block> blockRegistryObject){

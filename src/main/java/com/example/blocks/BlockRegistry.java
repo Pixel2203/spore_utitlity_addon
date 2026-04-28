@@ -19,7 +19,6 @@ public class BlockRegistry {
 
     private static final DeferredRegister<Block> registered_blocks = DeferredRegister.create(ForgeRegistries.BLOCKS, SporeUtility.MODID);
     public static final RegistryObject<Block> CDUFiller = registerBlockWithItem("cdu_filler", () -> Factory.CDUFillerBLK);
-    public static final RegistryObject<Block> CleanedAir = registerBlockWithItem("cleaned_air", () -> Factory.CleanedAirBLK);
     public static final RegistryObject<Block> AFU = registerBlockWithItem("afu", () -> Factory.AFUBLK);
 
 
@@ -53,7 +52,6 @@ public class BlockRegistry {
 
     private static class Factory {
         public static final Block CDUFillerBLK = new CDUFillerBlock();
-        public static final Block CleanedAirBLK = new CleanedAirBlock();
         public static final Block AFUBLK = new AFUBlock();
     }
 }

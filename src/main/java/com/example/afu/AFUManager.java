@@ -16,9 +16,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public class AFUManager {
-    // Speichert: Welche Luft-Position gehört zu welcher AFU?
-    // Map<LuftPos, AFUPos>
-    private static final Map<BlockPos, AFUBaseEntity> AIR_MAP = new HashMap<>();
     private static final Map<BlockPos, AFUBaseEntity> SEALED_MAP = new HashMap<>();
     private static final Logger log = LoggerFactory.getLogger(AFUManager.class);
 
@@ -45,27 +42,11 @@ public class AFUManager {
     public static void unregisterAFU(ServerLevel level, Set<BlockPos> sealedBlocks, Set<BlockPos> replacedAirBlocks) {
         // Entfernt alle Einträge, die zu dieser AFU gehören
         sealedBlocks.forEach(SEALED_MAP::remove);
-        replacedAirBlocks.forEach(AIR_MAP::remove);
 
-        replacedAirBlocks.forEach(pos -> {
-            BlockState state = level.getBlockState(pos);
-            if(state.is(BlockRegistry.CleanedAir.get())) {
-               // level.setBlock(pos, Blocks.AIR.defaultBlockState(), 2);
-            }
-        });
     }
 
     public static void registerAFU(AFUBaseEntity afu, Set<BlockPos> sealedBlocks, Set<BlockPos> airBlocks, ServerLevel level) {
         sealedBlocks.forEach(pos -> AFUManager.addSealedBlock(pos, afu));
-        airBlocks.forEach(pos -> AIR_MAP.put(pos, afu));
-
-        airBlocks.forEach((pos) -> {
-         //   level.setBlock(pos, BlockRegistry.CleanedAir.get().defaultBlockState(), 2);
-        });
-    }
-
-    public static AFUBaseEntity getOwner(BlockPos airPos) {
-        return AIR_MAP.get(airPos);
     }
 
     public static AFUBaseEntity getSealedOwner(BlockPos changedPos) {
