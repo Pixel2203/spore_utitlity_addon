@@ -1,7 +1,9 @@
 package com.example.datagen;
 
 import com.example.examplemod.SporeUtility;
+import com.example.sound.SoundRegistry;
 import net.minecraft.data.PackOutput;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.common.data.SoundDefinitionsProvider;
@@ -20,7 +22,7 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
 
     @Override
     public void registerSounds() {
-        //this.registerSimpleSound(SoundRegistry.VIAL_FILL_SOUND);
+        this.registerSimpleSound(SoundRegistry.AFU_IDLE_SOUND);
     }
 
     /**
@@ -30,6 +32,16 @@ public class ModSoundProvider extends SoundDefinitionsProvider {
      */
     private void registerSimpleSound(RegistryObject<SoundEvent> event) {
         // Starte den Sound-Eintrag (den Schlüssel in der JSON)
+        this.add(ResourceLocation.fromNamespaceAndPath(SporeUtility.MODID, event.getId().getPath()),
+                // Füge die Sound-Definitionen hinzu
+                definition()
+                        // Fügt den Soundpfad hinzu (ResourceLocation: modid:soundName)
+                        .with(sound(ResourceLocation.fromNamespaceAndPath(SporeUtility.MODID, event.getId().getPath()))
+                                // Optional: Lautstärke und Tonhöhe können hier angepasst werden
+                                .volume(1.0F)
+                                .pitch(1.0F)
+                        )
+        );
 
     }
 }

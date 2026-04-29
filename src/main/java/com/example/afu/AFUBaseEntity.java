@@ -4,10 +4,12 @@ import com.example.entity.block.AFUBlockEntity;
 import com.example.entity.block.BlockEntityRegistry;
 import com.example.errors.BlockLimitExceededException;
 import com.example.examplemod.Config;
+import com.example.sound.SoundRegistry;
 import com.example.util.ITickableBlockEntity;
 import lombok.extern.slf4j.Slf4j;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -85,7 +87,6 @@ public abstract class AFUBaseEntity extends BlockEntity implements ITickableBloc
         }
         try {
             ScanResult result = this.scanner.scan(level, getBlockPos());
-            context.getReplacedAirBlocks().addAll(result.cleanedAirBlocks());
             context.getSealedBlocks().addAll(result.sealedBlocks());
 
             AFUManager.registerAFU(this, context.getSealedBlocks(), context.getReplacedAirBlocks(), level);
@@ -123,6 +124,11 @@ public abstract class AFUBaseEntity extends BlockEntity implements ITickableBloc
 
     @Override
     public void tick(ServerLevel level) {
+
+        if(context.isActive()) {
+            level.playSound(null, getBlockPos(), SoundRegistry.AFU_IDLE_SOUND.get(), SoundSource.NEUTRAL);
+        }
+
         if(context.isSealed()) {
             context.setInvalidationTicker(context.getInvalidationTicker() + 1);
             if(context.getInvalidationTicker() % context.getAutoInvalidationInterval() == 0) {

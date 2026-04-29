@@ -8,6 +8,7 @@ import com.example.menu.ModMenuTypes;
 import com.example.network.PacketHandler;
 import com.example.screen.AFUScreen;
 import com.example.screen.CDUFillerScreen;
+import com.example.sound.SoundRegistry;
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -53,6 +54,8 @@ public class SporeUtility
         LOGGER.info("SporeUtility: Registered Creative Tabs");
         ModMenuTypes.register(modEventBus);
         LOGGER.info("SporeUtility: Registered Mod Menu Types");
+        SoundRegistry.register(modEventBus);
+        LOGGER.info("SporeUtility: Registered Sound Types");
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
 
