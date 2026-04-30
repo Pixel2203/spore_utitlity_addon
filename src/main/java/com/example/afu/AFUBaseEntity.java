@@ -56,7 +56,7 @@ public abstract class AFUBaseEntity extends BlockEntity implements ITickableBloc
     }
 
     public void breach(BlockPos breachedPos) {
-        log.debug("AFUBlockEntity.breach({})", breachedPos);
+        log.debug("AFUBlockEntity.breach BreachedPos: {})", breachedPos);
         Level level = getLevel();
         if(level.isClientSide()) return;
         if(!context.isSealed()) return;
