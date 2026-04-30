@@ -1,6 +1,7 @@
 package com.example.datagen;
 
 import com.example.examplemod.SporeUtility;
+import com.example.items.ItemRegistry;
 import net.minecraft.data.PackOutput;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
@@ -16,7 +17,7 @@ public class ModItemModelProvider extends ItemModelProvider {
 
     @Override
     protected void registerModels() {
-
+        simpleItem(ItemRegistry.Filter);
 
 
 

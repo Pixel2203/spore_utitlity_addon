@@ -1,7 +1,9 @@
 package com.example.items;
 
 import com.example.examplemod.SporeUtility;
+import net.minecraft.client.renderer.item.ItemProperties;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -16,6 +18,9 @@ public class ItemRegistry {
 
 
     private static final DeferredRegister<Item> registered_items = DeferredRegister.create(ForgeRegistries.ITEMS, SporeUtility.MODID);
+
+    public static final RegistryObject<Item> Filter = registerItem("filter", () -> new Item(new Item.Properties().durability(200).defaultDurability(200)));
+
 
     public static void registerItems(IEventBus modBus) {
         registered_items.register(modBus);
