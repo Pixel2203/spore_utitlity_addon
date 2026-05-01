@@ -1,44 +1,45 @@
-[30Apr.2026 19:17:40.801] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgedatauserdev, --assetIndex, 5, --assetsDir, C:\Users\pixel\.gradle\caches\forge_gradle\assets, --gameDir, ., --fml.forgeVersion, 47.4.10, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412, --mod, sporeutility, --all, --output, F:\spore_utitlity_addon\src\generated\resources, --existing, F:\spore_utitlity_addon\src\main\resources, --mixin.config, sporeutility.mixins.json]
-[30Apr.2026 19:17:40.805] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.8.1 by JetBrains s.r.o.; OS Windows 10 arch amd64 version 10.0
-[30Apr.2026 19:17:40.895] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgedatauserdev
-[30Apr.2026 19:17:40.931] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/C:/Users/pixel/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%23128!/ Service=ModLauncher Env=CLIENT
-[30Apr.2026 19:17:41.199] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\pixel\.gradle\caches\modules-2\files-2.1\net.minecraftforge\javafmllanguage\1.20.1-47.4.10\ccc533c7dd67e0983217197d7549c8b49e7ab453\javafmllanguage-1.20.1-47.4.10.jar is missing mods.toml file
-[30Apr.2026 19:17:41.201] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\pixel\.gradle\caches\modules-2\files-2.1\net.minecraftforge\lowcodelanguage\1.20.1-47.4.10\e9a2879fe3612ea34b9728ec2633304a1e67d480\lowcodelanguage-1.20.1-47.4.10.jar is missing mods.toml file
-[30Apr.2026 19:17:41.204] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\pixel\.gradle\caches\modules-2\files-2.1\net.minecraftforge\mclanguage\1.20.1-47.4.10\ec5cefbbc65c67302b8fac317010faab85fa14b9\mclanguage-1.20.1-47.4.10.jar is missing mods.toml file
-[30Apr.2026 19:17:41.206] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file C:\Users\pixel\.gradle\caches\modules-2\files-2.1\net.minecraftforge\fmlcore\1.20.1-47.4.10\94dae566be650566ea9115a1414ab76bfcf5a804\fmlcore-1.20.1-47.4.10.jar is missing mods.toml file
-[30Apr.2026 19:17:41.301] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
-[30Apr.2026 19:17:42.325] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
-[30Apr.2026 19:17:42.329] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgedatauserdev' with arguments [--gameDir, ., --assetsDir, C:\Users\pixel\.gradle\caches\forge_gradle\assets, --assetIndex, 5, --mod, sporeutility, --all, --output, F:\spore_utitlity_addon\src\generated\resources, --existing, F:\spore_utitlity_addon\src\main\resources]
-[30Apr.2026 19:17:42.636] [main/INFO] [net.minecraftforge.data.loading.DatagenModLoader/]: Initializing Data Gatherer for mods [sporeutility]
-[30Apr.2026 19:17:45.441] [modloading-worker-0/INFO] [com.example.examplemod.SporeUtility/]: SporeUtility: Registered Blocks
-[30Apr.2026 19:17:45.442] [modloading-worker-0/INFO] [com.example.examplemod.SporeUtility/]: SporeUtility: Registered Items
-[30Apr.2026 19:17:45.443] [modloading-worker-0/INFO] [com.example.examplemod.SporeUtility/]: SporeUtility: Registered Blockentities
-[30Apr.2026 19:17:45.444] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 47.4.10, for MC 1.20.1 with MCP 20230612.114412
-[30Apr.2026 19:17:45.444] [modloading-worker-0/INFO] [com.example.examplemod.SporeUtility/]: SporeUtility: Registered Creative Tabs
-[30Apr.2026 19:17:45.446] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v47.4.10 Initialized
-[30Apr.2026 19:17:45.447] [modloading-worker-0/INFO] [com.example.examplemod.SporeUtility/]: SporeUtility: Registered Mod Menu Types
-[30Apr.2026 19:17:46.046] [main/WARN] [net.minecraft.network.syncher.SynchedEntityData/]: defineId called for: class com.Harbinger.Spore.Sentities.EvolvedInfected.Spitter from class com.Harbinger.Spore.Sentities.EvolvedInfected.Howler
-[30Apr.2026 19:17:46.048] [main/WARN] [net.minecraft.network.syncher.SynchedEntityData/]: defineId called for: class com.Harbinger.Spore.Sentities.EvolvedInfected.Busser from class com.Harbinger.Spore.Sentities.EvolvedInfected.Scamper
-[30Apr.2026 19:17:46.049] [main/WARN] [net.minecraft.network.syncher.SynchedEntityData/]: defineId called for: class com.Harbinger.Spore.Sentities.EvolvedInfected.Busser from class com.Harbinger.Spore.Sentities.Organoids.Vigil
-[30Apr.2026 19:17:46.051] [main/WARN] [net.minecraft.network.syncher.SynchedEntityData/]: defineId called for: class com.Harbinger.Spore.Sentities.EvolvedInfected.Busser from class com.Harbinger.Spore.Sentities.Organoids.Brauerei
-[30Apr.2026 19:17:46.052] [main/WARN] [net.minecraft.network.syncher.SynchedEntityData/]: defineId called for: class com.Harbinger.Spore.Sentities.BaseEntities.Infected from class com.Harbinger.Spore.Sentities.BaseEntities.Hyper
-[30Apr.2026 19:17:46.114] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/pixel/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.10_mapped_official_1.20.1/forge-1.20.1-47.4.10_mapped_official_1.20.1.jar%23191!/assets/.mcassetsroot' uses unexpected schema
-[30Apr.2026 19:17:46.115] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/C:/Users/pixel/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.10_mapped_official_1.20.1/forge-1.20.1-47.4.10_mapped_official_1.20.1.jar%23191!/data/.mcassetsroot' uses unexpected schema
-[30Apr.2026 19:17:46.213] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Loot Tables
-[30Apr.2026 19:17:46.245] [main/INFO] [net.minecraft.data.DataGenerator/]: Loot Tables finished after 31 ms
-[30Apr.2026 19:17:46.245] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Block States: sporeutility
-[30Apr.2026 19:17:46.391] [main/INFO] [net.minecraft.data.DataGenerator/]: Block States: sporeutility finished after 145 ms
-[30Apr.2026 19:17:46.392] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Item Models: sporeutility
-[30Apr.2026 19:17:46.393] [main/INFO] [net.minecraft.data.DataGenerator/]: Item Models: sporeutility finished after 1 ms
-[30Apr.2026 19:17:46.393] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:block mod id sporeutility
-[30Apr.2026 19:17:46.396] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:block mod id sporeutility finished after 2 ms
-[30Apr.2026 19:17:46.396] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:item mod id sporeutility
-[30Apr.2026 19:17:46.396] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:item mod id sporeutility finished after 0 ms
-[30Apr.2026 19:17:46.396] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Recipes
-[30Apr.2026 19:17:46.405] [main/INFO] [net.minecraft.data.DataGenerator/]: Recipes finished after 8 ms
-[30Apr.2026 19:17:46.405] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Sound Definitions
-[30Apr.2026 19:17:46.405] [main/INFO] [net.minecraft.data.DataGenerator/]: Sound Definitions finished after 0 ms
-[30Apr.2026 19:17:46.405] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Global Loot Modifiers : sporeutility
-[30Apr.2026 19:17:46.406] [main/INFO] [net.minecraft.data.DataGenerator/]: Global Loot Modifiers : sporeutility finished after 0 ms
-[30Apr.2026 19:17:46.406] [main/INFO] [net.minecraft.data.DataGenerator/]: All providers took: 193 ms
-[30Apr.2026 19:17:46.414] [main/INFO] [net.minecraft.data.HashCache/]: Caching: total files: 15, old count: 14, new count: 13, removed stale: 3, written: 1
+[29Apr.2026 00:03:50.522] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgedatauserdev, --assetIndex, 5, --assetsDir, /Users/marvinkaiser/.gradle/caches/forge_gradle/assets, --gameDir, ., --fml.forgeVersion, 47.4.10, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412, --mod, sporeutility, --all, --output, /Users/marvinkaiser/Desktop/spore-essentials/src/generated/resources, --existing, /Users/marvinkaiser/Desktop/spore-essentials/src/main/resources, --mixin.config, sporeutility.mixins.json]
+[29Apr.2026 00:03:50.523] [main/INFO] [cpw.mods.modlauncher.Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.17 by Microsoft; OS Mac OS X arch aarch64 version 15.6
+[29Apr.2026 00:03:50.555] [main/INFO] [net.minecraftforge.fml.loading.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgedatauserdev
+[29Apr.2026 00:03:50.576] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/Users/marvinkaiser/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%23121!/ Service=ModLauncher Env=CLIENT
+[29Apr.2026 00:03:50.705] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file /Users/marvinkaiser/.gradle/caches/modules-2/files-2.1/net.minecraftforge/javafmllanguage/1.20.1-47.4.10/ccc533c7dd67e0983217197d7549c8b49e7ab453/javafmllanguage-1.20.1-47.4.10.jar is missing mods.toml file
+[29Apr.2026 00:03:50.706] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file /Users/marvinkaiser/.gradle/caches/modules-2/files-2.1/net.minecraftforge/lowcodelanguage/1.20.1-47.4.10/e9a2879fe3612ea34b9728ec2633304a1e67d480/lowcodelanguage-1.20.1-47.4.10.jar is missing mods.toml file
+[29Apr.2026 00:03:50.706] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file /Users/marvinkaiser/.gradle/caches/modules-2/files-2.1/net.minecraftforge/mclanguage/1.20.1-47.4.10/ec5cefbbc65c67302b8fac317010faab85fa14b9/mclanguage-1.20.1-47.4.10.jar is missing mods.toml file
+[29Apr.2026 00:03:50.707] [main/WARN] [net.minecraftforge.fml.loading.moddiscovery.ModFileParser/LOADING]: Mod file /Users/marvinkaiser/.gradle/caches/modules-2/files-2.1/net.minecraftforge/fmlcore/1.20.1-47.4.10/94dae566be650566ea9115a1414ab76bfcf5a804/fmlcore-1.20.1-47.4.10.jar is missing mods.toml file
+[29Apr.2026 00:03:50.729] [main/INFO] [net.minecraftforge.fml.loading.moddiscovery.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
+[29Apr.2026 00:03:51.229] [main/INFO] [mixin/]: Compatibility level set to JAVA_17
+[29Apr.2026 00:03:51.231] [main/INFO] [cpw.mods.modlauncher.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgedatauserdev' with arguments [--gameDir, ., --assetsDir, /Users/marvinkaiser/.gradle/caches/forge_gradle/assets, --assetIndex, 5, --mod, sporeutility, --all, --output, /Users/marvinkaiser/Desktop/spore-essentials/src/generated/resources, --existing, /Users/marvinkaiser/Desktop/spore-essentials/src/main/resources]
+[29Apr.2026 00:03:51.367] [main/INFO] [net.minecraftforge.data.loading.DatagenModLoader/]: Initializing Data Gatherer for mods [sporeutility]
+[29Apr.2026 00:03:52.873] [modloading-worker-0/INFO] [com.example.examplemod.SporeUtility/]: SporeUtility: Registered Blocks
+[29Apr.2026 00:03:52.874] [modloading-worker-0/INFO] [com.example.examplemod.SporeUtility/]: SporeUtility: Registered Items
+[29Apr.2026 00:03:52.875] [modloading-worker-0/INFO] [net.minecraftforge.common.ForgeMod/FORGEMOD]: Forge mod loading, version 47.4.10, for MC 1.20.1 with MCP 20230612.114412
+[29Apr.2026 00:03:52.875] [modloading-worker-0/INFO] [com.example.examplemod.SporeUtility/]: SporeUtility: Registered Blockentities
+[29Apr.2026 00:03:52.876] [modloading-worker-0/INFO] [net.minecraftforge.common.MinecraftForge/FORGE]: MinecraftForge v47.4.10 Initialized
+[29Apr.2026 00:03:52.876] [modloading-worker-0/INFO] [com.example.examplemod.SporeUtility/]: SporeUtility: Registered Creative Tabs
+[29Apr.2026 00:03:52.877] [modloading-worker-0/INFO] [com.example.examplemod.SporeUtility/]: SporeUtility: Registered Mod Menu Types
+[29Apr.2026 00:03:52.878] [modloading-worker-0/INFO] [com.example.examplemod.SporeUtility/]: SporeUtility: Registered Sound Types
+[29Apr.2026 00:03:53.176] [main/WARN] [net.minecraft.network.syncher.SynchedEntityData/]: defineId called for: class com.Harbinger.Spore.Sentities.EvolvedInfected.Spitter from class com.Harbinger.Spore.Sentities.EvolvedInfected.Howler
+[29Apr.2026 00:03:53.176] [main/WARN] [net.minecraft.network.syncher.SynchedEntityData/]: defineId called for: class com.Harbinger.Spore.Sentities.EvolvedInfected.Busser from class com.Harbinger.Spore.Sentities.EvolvedInfected.Scamper
+[29Apr.2026 00:03:53.176] [main/WARN] [net.minecraft.network.syncher.SynchedEntityData/]: defineId called for: class com.Harbinger.Spore.Sentities.EvolvedInfected.Busser from class com.Harbinger.Spore.Sentities.Organoids.Vigil
+[29Apr.2026 00:03:53.177] [main/WARN] [net.minecraft.network.syncher.SynchedEntityData/]: defineId called for: class com.Harbinger.Spore.Sentities.EvolvedInfected.Busser from class com.Harbinger.Spore.Sentities.Organoids.Brauerei
+[29Apr.2026 00:03:53.177] [main/WARN] [net.minecraft.network.syncher.SynchedEntityData/]: defineId called for: class com.Harbinger.Spore.Sentities.BaseEntities.Infected from class com.Harbinger.Spore.Sentities.BaseEntities.Hyper
+[29Apr.2026 00:03:53.205] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/Users/marvinkaiser/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.10_mapped_official_1.20.1/forge-1.20.1-47.4.10_mapped_official_1.20.1-recomp.jar%23184!/assets/.mcassetsroot' uses unexpected schema
+[29Apr.2026 00:03:53.205] [main/WARN] [net.minecraft.server.packs.VanillaPackResourcesBuilder/]: Assets URL 'union:/Users/marvinkaiser/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.10_mapped_official_1.20.1/forge-1.20.1-47.4.10_mapped_official_1.20.1-recomp.jar%23184!/data/.mcassetsroot' uses unexpected schema
+[29Apr.2026 00:03:53.246] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Loot Tables
+[29Apr.2026 00:03:53.259] [main/INFO] [net.minecraft.data.DataGenerator/]: Loot Tables finished after 12 ms
+[29Apr.2026 00:03:53.259] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Block States: sporeutility
+[29Apr.2026 00:03:53.287] [main/INFO] [net.minecraft.data.DataGenerator/]: Block States: sporeutility finished after 27 ms
+[29Apr.2026 00:03:53.287] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Item Models: sporeutility
+[29Apr.2026 00:03:53.287] [main/INFO] [net.minecraft.data.DataGenerator/]: Item Models: sporeutility finished after 0 ms
+[29Apr.2026 00:03:53.287] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:block mod id sporeutility
+[29Apr.2026 00:03:53.315] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:block mod id sporeutility finished after 27 ms
+[29Apr.2026 00:03:53.315] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Tags for minecraft:item mod id sporeutility
+[29Apr.2026 00:03:53.316] [main/INFO] [net.minecraft.data.DataGenerator/]: Tags for minecraft:item mod id sporeutility finished after 0 ms
+[29Apr.2026 00:03:53.316] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Recipes
+[29Apr.2026 00:03:53.321] [main/INFO] [net.minecraft.data.DataGenerator/]: Recipes finished after 5 ms
+[29Apr.2026 00:03:53.321] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Sound Definitions
+[29Apr.2026 00:03:53.321] [main/INFO] [net.minecraft.data.DataGenerator/]: Sound Definitions finished after 0 ms
+[29Apr.2026 00:03:53.321] [main/INFO] [net.minecraft.data.DataGenerator/]: Starting provider: Global Loot Modifiers : sporeutility
+[29Apr.2026 00:03:53.322] [main/INFO] [net.minecraft.data.DataGenerator/]: Global Loot Modifiers : sporeutility finished after 0 ms
+[29Apr.2026 00:03:53.322] [main/INFO] [net.minecraft.data.DataGenerator/]: All providers took: 75 ms
+[29Apr.2026 00:03:53.324] [main/INFO] [net.minecraft.data.HashCache/]: Caching: total files: 11, old count: 11, new count: 12, removed stale: 0, written: 0

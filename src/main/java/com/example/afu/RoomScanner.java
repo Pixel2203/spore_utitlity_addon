@@ -18,13 +18,12 @@ public record RoomScanner(int maxBlocksLimit) {
     public ScanResult scan(ServerLevel level, BlockPos startPos) throws BlockLimitExceededException {
         // 1. Hier speichern wir alle Positionen, die wir schon besucht haben
         Set<BlockPos> sealed = new HashSet<>();
-        Set<BlockPos> toBeReplaced = new HashSet<>();
+
         // 2. Hier kommen die Blöcke rein, die noch geprüft werden müssen
         Queue<BlockPos> queue = new LinkedList<>();
 
         // Wir starten beim Block direkt am Air Purifier
         queue.add(startPos);
-        //visited.add(startPos);
 
         BlockState startedState = level.getBlockState(startPos);
         if(canFlow(level, startedState, startPos)) {
@@ -42,10 +41,6 @@ public record RoomScanner(int maxBlocksLimit) {
                 if (!canFlow(level, neighborState, neighbor)) continue;
                 if (sealed.contains(neighbor)) continue;
 
-                if (neighborState.is(Blocks.AIR)) {
-                    toBeReplaced.add(neighbor);
-                }
-
                 sealed.add(neighbor);
                 queue.add(neighbor);
 
@@ -56,13 +51,12 @@ public record RoomScanner(int maxBlocksLimit) {
 
             }
         }
-        return new ScanResult(sealed, toBeReplaced);
+        return new ScanResult(sealed);
     }
 
     public ScanResult incrementalScan(ServerLevel level, BlockPos startPos) throws BlockLimitExceededException {
         // 1. Hier speichern wir alle Positionen, die wir schon besucht haben
         Set<BlockPos> sealed = new HashSet<>();
-        Set<BlockPos> toBeReplaced = new HashSet<>();
         // 2. Hier kommen die Blöcke rein, die noch geprüft werden müssen
         Queue<BlockPos> queue = new LinkedList<>();
 
@@ -86,10 +80,6 @@ public record RoomScanner(int maxBlocksLimit) {
                 if (!canFlow(level, neighborState, neighbor)) continue;
                 if (sealed.contains(neighbor) || AFUManager.isSealed(neighbor)) continue;
 
-                if (neighborState.is(Blocks.AIR)) {
-                    toBeReplaced.add(neighbor);
-                }
-
                 sealed.add(neighbor);
                 queue.add(neighbor);
 
@@ -100,7 +90,7 @@ public record RoomScanner(int maxBlocksLimit) {
 
             }
         }
-        return new ScanResult(sealed, toBeReplaced);
+        return new ScanResult(sealed);
     }
 
 

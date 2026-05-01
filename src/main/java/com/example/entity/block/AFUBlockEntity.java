@@ -98,16 +98,6 @@ public class AFUBlockEntity extends AFUBaseEntity implements MenuProvider, Conta
         return new AFUMenu(id, inv, this, context.getContainerData());
     }
 
-
-    private boolean isSealValid() {
-        try {
-            scanner.scan((ServerLevel) getLevel(), getBlockPos());
-            return true;
-        }catch (BlockLimitExceededException e){
-            return false;
-        }
-    }
-
     @Override
     public int getContainerSize() {
         return context.getInventory().getSlots();
