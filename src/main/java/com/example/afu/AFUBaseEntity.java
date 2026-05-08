@@ -1,21 +1,22 @@
 package com.example.afu;
 
-import com.example.entity.block.AFUBlockEntity;
 import com.example.entity.block.BlockEntityRegistry;
 import com.example.errors.BlockLimitExceededException;
 import com.example.examplemod.Config;
-import com.example.sound.SoundRegistry;
+import com.example.items.ItemRegistry;
 import com.example.util.ITickableBlockEntity;
 import lombok.extern.slf4j.Slf4j;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.ContainerData;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.Set;
 
 @Slf4j
@@ -87,12 +88,17 @@ public abstract class AFUBaseEntity extends BlockEntity implements ITickableBloc
         }
         try {
             ScanResult result = this.scanner.scan(level, getBlockPos());
+            if(Objects.isNull(getActiveFilter())) return;
+            int filterInterval = this.calculateFilterUseInterval(result.sealedBlocks().size());
+            context.setFilterInterval(filterInterval);
             context.getSealedBlocks().addAll(result.sealedBlocks());
-
             AFUManager.registerAFU(this, context.getSealedBlocks(), context.getReplacedAirBlocks(), level);
-            log.debug("Blocks to supply: {}", context.getSealedBlocks().size());
             context.setSealed(true);
             this.setChanged();
+
+
+
+            log.debug("Blocks to supply: {}", context.getSealedBlocks().size());
         }catch (BlockLimitExceededException e) {
             log.error(e.getMessage());
         }
@@ -104,48 +110,81 @@ public abstract class AFUBaseEntity extends BlockEntity implements ITickableBloc
             return;
         }
         Set<BlockPos> sealedBlocks = context.getSealedBlocks();
-        Set<BlockPos> replacedAirBlocks = context.getReplacedAirBlocks();
         if(sealedBlocks.isEmpty()) {
             log.warn("AFUBlockEntity.unseal: sealedBlocks is empty, cannot unseal");
             return;
         }
-        if(replacedAirBlocks.isEmpty()) {
-            log.warn("AFUBlockEntity.unseal: replacedAirBlocks is empty,  cannot unseal");
-            return;
-        }
-        AFUManager.unregisterAFU(level, sealedBlocks, replacedAirBlocks);
-
+        AFUManager.unregisterAFU(level, sealedBlocks);
+        context.setFilterInterval(0);
         sealedBlocks.clear();
-        replacedAirBlocks.clear();
         context.setSealed(false);
         this.setChanged();
     }
 
 
+
     @Override
     public void tick(ServerLevel level) {
 
-        if(context.isActive()) {
-            level.playSound(null, getBlockPos(), SoundRegistry.AFU_IDLE_SOUND.get(), SoundSource.NEUTRAL);
-        }
-
         if(context.isSealed()) {
-            context.setInvalidationTicker(context.getInvalidationTicker() + 1);
-            if(context.getInvalidationTicker() % context.getAutoInvalidationInterval() == 0) {
-                context.setInvalidationTicker(0);
-                try {
-                    scanner.scan(level, getBlockPos());
-                } catch (BlockLimitExceededException e) {
-                    this.unseal(level);
-                }
+            onInvalidationTick(level);
+            context.setFilterTicker(context.getFilterTicker() + 1);
+            if(context.getFilterTicker() >= context.getFilterInterval()) {
+                context.setFilterTicker(0);
+                onFilterTick(level);
             }
             return;
         }
-
         context.increaseTicker();
+
         if(context.getTicker() >= context.getAutoRetryInterval()) {
             this.seal(level);
             context.setTicker(0);
         }
+
+
     }
+
+    private void onInvalidationTick(ServerLevel level) {
+        context.setInvalidationTicker(context.getInvalidationTicker() + 1);
+        if(context.getInvalidationTicker() % context.getAutoInvalidationInterval() == 0) {
+            context.setInvalidationTicker(0);
+            try {
+                scanner.scan(level, getBlockPos());
+            } catch (BlockLimitExceededException e) {
+                this.unseal(level);
+            }
+        }
+    }
+
+    private void onFilterTick(ServerLevel level) {
+        var filter = getActiveFilter();
+        if(Objects.isNull(filter)) {
+            log.debug("AFUBlockEntity.onFilterTick: Filter is null, has been removed or broke");
+            this.unseal(level);
+            return;
+        }
+        int oldDamageValue = filter.getDamageValue();
+
+        ItemStack updatedFiler = filter.copy();
+        updatedFiler.setDamageValue(oldDamageValue + 1);
+        if(oldDamageValue >= filter.getMaxDamage()) updatedFiler = ItemStack.EMPTY;
+        context.getInventory().setStackInSlot(0, updatedFiler);
+
+    }
+
+    @Nullable
+    private ItemStack getActiveFilter() {
+        ItemStack filter = this.context.getInventory().getStackInSlot(0);
+        if(!filter.is(ItemRegistry.Filter.get())) {
+            log.error(("AFUBlockEntity.filter: Item is not in Filter"));
+            return null;
+        }
+        return filter.copy();
+    }
+
+    private int calculateFilterUseInterval(int roomSize) {
+        return Config.AFU_BLOCK_LIMIT.get() / roomSize;
+    }
+
 }

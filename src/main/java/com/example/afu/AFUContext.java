@@ -30,6 +30,8 @@ public class AFUContext {
     private int ticker = 0;
     private boolean isActive = false;
     private int invalidationTicker = 0;
+    private int filterTicker = 0;
+    private int filterInterval = 0;
 
 
     private LazyOptional<IItemHandler> lazyOptional = LazyOptional.empty();

@@ -39,7 +39,7 @@ public class AFUManager {
         return SEALED_MAP.containsKey(pos);
     }
 
-    public static void unregisterAFU(ServerLevel level, Set<BlockPos> sealedBlocks, Set<BlockPos> replacedAirBlocks) {
+    public static void unregisterAFU(ServerLevel level, Set<BlockPos> sealedBlocks) {
         // Entfernt alle Einträge, die zu dieser AFU gehören
         sealedBlocks.forEach(SEALED_MAP::remove);
 
