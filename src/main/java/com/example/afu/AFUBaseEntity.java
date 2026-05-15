@@ -4,10 +4,12 @@ import com.example.entity.block.BlockEntityRegistry;
 import com.example.errors.BlockLimitExceededException;
 import com.example.examplemod.Config;
 import com.example.items.ItemRegistry;
+import com.example.sound.SoundRegistry;
 import com.example.util.ITickableBlockEntity;
 import lombok.extern.slf4j.Slf4j;
 import net.minecraft.core.BlockPos;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.inventory.ContainerData;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -26,7 +28,7 @@ public abstract class AFUBaseEntity extends BlockEntity implements ITickableBloc
     protected final RoomScanner scanner;
 
 
-    public AFUBaseEntity(BlockPos blockPos, BlockState blockState) {
+    protected AFUBaseEntity(BlockPos blockPos, BlockState blockState) {
         super(BlockEntityRegistry.AFUBlockEntity.get(), blockPos, blockState);
 
         ContainerData containerData = new ContainerData() {
@@ -97,7 +99,6 @@ public abstract class AFUBaseEntity extends BlockEntity implements ITickableBloc
             this.setChanged();
 
 
-
             log.debug("Blocks to supply: {}", context.getSealedBlocks().size());
         }catch (BlockLimitExceededException e) {
             log.error(e.getMessage());
@@ -125,27 +126,37 @@ public abstract class AFUBaseEntity extends BlockEntity implements ITickableBloc
 
     @Override
     public void tick(ServerLevel level) {
+        if(!isActive()) return;
 
         if(context.isSealed()) {
-            onInvalidationTick(level);
-            context.setFilterTicker(context.getFilterTicker() + 1);
-            if(context.getFilterTicker() >= context.getFilterInterval()) {
-                context.setFilterTicker(0);
-                onFilterTick(level);
-            }
-            return;
+            onSealedTick(level);
+        }else {
+            onUnsealedTick(level);
         }
+    }
+
+    private void onSealedTick(ServerLevel level) {
+        progressInvalidation(level);
+        context.setFilterTicker(context.getFilterTicker() + 1);
+        if(context.getFilterTicker() >= context.getFilterInterval()) {
+            context.setFilterTicker(0);
+            onFilterTick(level);
+        }
+        return;
+    }
+
+    private void onUnsealedTick(ServerLevel level) {
+        progressInvalidation(level);
+
         context.increaseTicker();
 
         if(context.getTicker() >= context.getAutoRetryInterval()) {
             this.seal(level);
             context.setTicker(0);
         }
-
-
     }
 
-    private void onInvalidationTick(ServerLevel level) {
+    private void progressInvalidation(ServerLevel level) {
         context.setInvalidationTicker(context.getInvalidationTicker() + 1);
         if(context.getInvalidationTicker() % context.getAutoInvalidationInterval() == 0) {
             context.setInvalidationTicker(0);
@@ -170,7 +181,7 @@ public abstract class AFUBaseEntity extends BlockEntity implements ITickableBloc
         updatedFiler.setDamageValue(oldDamageValue + 1);
         if(oldDamageValue >= filter.getMaxDamage()) updatedFiler = ItemStack.EMPTY;
         context.getInventory().setStackInSlot(0, updatedFiler);
-
+        setChanged();
     }
 
     @Nullable
