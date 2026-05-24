@@ -19,7 +19,7 @@ import java.util.logging.Level;
 
 @Mod.EventBusSubscriber(modid = SporeUtility.MODID, bus = Mod.EventBusSubscriber.Bus.FORGE, value = Dist.CLIENT)
 public class SporeDamageHandler {
-
+    /*
     @SubscribeEvent
     public static void onPlayerTick(TickEvent.PlayerTickEvent event) {
         Player player = event.player;
@@ -34,6 +34,8 @@ public class SporeDamageHandler {
             player.hurt(player.damageSources().drown(), (float) (maxHealth * 0.1));
         }
     }
+
+     */
 
 
 }
